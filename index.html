@@ -33,7 +33,7 @@
   --accent: #0B7F6B; --on-accent: #FFFFFF; --income: #0B8457; --expense: #C9443A; --warn: #A86F00; --info: #2F5FC8; --chip: #E6F0ED;
   --c1: #3B6FD8; --c2: #0B7F6B; --c3: #D49A1F; --c4: #8E5BD6; --c5: #B3C0BC; --c6: #D45C8A;
   --card1: #0B7F6B; --card2: #2F5FC8; --card3: #6A47B8; --card4: #8A6420; --on-card: #FFFFFF;
-  --scrim: rgba(15,27,29,.45); --page: #E2EAE8; --frame: #C9D5D2; --shadow: 0 30px 80px -30px rgba(15,27,29,.35);
+  --badge: #C9443A; --on-badge: #FFFFFF; --scrim: rgba(15,27,29,.45); --page: #E2EAE8; --frame: #C9D5D2; --shadow: 0 30px 80px -30px rgba(15,27,29,.35);
   --font: "Manrope", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
@@ -41,13 +41,13 @@
   --accent: #2BD4AE; --on-accent: #04241C; --income: #3DDC97; --expense: #FF715F; --warn: #F4B84A; --info: #6F9BFF; --chip: #1B2B30;
   --c1: #6F9BFF; --c2: #2BD4AE; --c3: #F4B84A; --c4: #B98AF5; --c5: #5D726C; --c6: #F08BC2;
   --card1: #1E5A4C; --card2: #2B3F7A; --card3: #3A2E5C; --card4: #4A3F28; --on-card: #F4FAF8;
-  --scrim: rgba(3,8,10,.66); --page: #060C0E; --frame: #1C2629; --shadow: 0 30px 80px -30px rgba(0,0,0,.8); color-scheme: dark; } }
+  --badge: #FF715F; --on-badge: #2A0805; --scrim: rgba(3,8,10,.66); --page: #060C0E; --frame: #1C2629; --shadow: 0 30px 80px -30px rgba(0,0,0,.8); color-scheme: dark; } }
 :root[data-theme="dark"] {
   --bg: #0B1316; --surface: #121D21; --surface2: #18262B; --line: #24343A; --text: #EDF4F2; --muted: #A6B8B3; --faint: #6F837D;
   --accent: #2BD4AE; --on-accent: #04241C; --income: #3DDC97; --expense: #FF715F; --warn: #F4B84A; --info: #6F9BFF; --chip: #1B2B30;
   --c1: #6F9BFF; --c2: #2BD4AE; --c3: #F4B84A; --c4: #B98AF5; --c5: #5D726C; --c6: #F08BC2;
   --card1: #1E5A4C; --card2: #2B3F7A; --card3: #3A2E5C; --card4: #4A3F28; --on-card: #F4FAF8;
-  --scrim: rgba(3,8,10,.66); --page: #060C0E; --frame: #1C2629; --shadow: 0 30px 80px -30px rgba(0,0,0,.8); color-scheme: dark; }
+  --badge: #FF715F; --on-badge: #2A0805; --scrim: rgba(3,8,10,.66); --page: #060C0E; --frame: #1C2629; --shadow: 0 30px 80px -30px rgba(0,0,0,.8); color-scheme: dark; }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 body { margin: 0; background: var(--page); color: var(--text); font: 500 15px/1.4 var(--font); font-variant-numeric: tabular-nums;
@@ -93,6 +93,15 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
   box-shadow: 0 10px 24px -8px color-mix(in srgb, var(--accent) 70%, transparent); transition: transform .15s; }
 .fab:active { transform: scale(.93); }
 .fab svg.i { width: 26px; height: 26px; stroke-width: 2.3; }
+/* бейджи: новое видно прямо на вкладке, без всплывающих окон */
+.tab .tic { position: relative; display: grid; place-items: center; }
+.tbadge { position: absolute; top: -7px; left: 13px; min-width: 19px; height: 19px; padding: 0 5px; border-radius: 10px; background: var(--badge); color: var(--on-badge);
+  font: 800 11px/19px var(--font); text-align: center; letter-spacing: 0; box-shadow: 0 0 0 2px var(--bg); pointer-events: none; }
+.tbadge.dot { min-width: 0; width: 10px; height: 10px; padding: 0; top: -2px; left: 17px; }
+.tbadge.bump { animation: bump .55s cubic-bezier(.3,1.6,.5,1); }
+@keyframes bump { 0% { transform: scale(.2); } 55% { transform: scale(1.25); } 100% { transform: scale(1); } }
+.rbadge { min-width: 22px; height: 22px; padding: 0 7px; border-radius: 11px; background: var(--badge); color: var(--on-badge); font-size: 12px; font-weight: 800; line-height: 22px; text-align: center; }
+.op.unseen .t::after { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-left: 6px; vertical-align: 2px; }
 
 /* общие элементы */
 svg.i { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex: none; }
@@ -340,6 +349,7 @@ html.no-anim .device { width: 390px; height: 844px; min-height: 0; border-radius
       <li>Счета → «Цели и резерв»: цель только откладывает деньги на счёте, «Доступно» = баланс − резерв. Отложить больше свободного нельзя.</li>
       <li>Расход больше баланса счёта — приложение попросит подтвердить минус. Карточка долга → «Удалить долг»: два варианта.</li>
       <li>Аналитика → «Спросить» → AI-помощник отвечает по этим же данным.</li>
+      <li><b>Бейджи на нижнем меню:</b> «Операции» — сколько новых записей (в списке они отмечены точкой), «Счета» — долги с просрочкой или сроком в ближайшие 3 дня, точка на «Аналитике» — лимит категории исчерпан. Бейдж гаснет, когда раздел открыт. Добавьте расход на главной — счётчик на «Операциях» подпрыгнет.</li>
       <li>Аватар R → профиль: светлая и тёмная тема.</li>
     </ol>
     <p class="small">На компьютере сумму можно набирать с клавиатуры, Esc закрывает окно.</p>
@@ -466,16 +476,17 @@ function seed() {
     if (rnd() < 0.04) add({ kind: 'expense', cat: 'health', title: pick(CATS.expense[6].places), amount: between(50000, 300000), cur: 'UZS', acc: 'cash', date: at(11, 20) });
     if (rnd() < 0.04) add({ kind: 'income', cat: 'side', title: 'Фриланс', amount: between(500000, 2000000, 50000), cur: 'UZS', acc: 'humo', date: at(16, 0) });
   }
-  // свежие операции, чтобы главная выглядела живой
-  add({ kind: 'expense', cat: 'fun', title: 'Кино', amount: 140000, cur: 'UZS', acc: 'humo', date: ago(1, 21, 10) });
-  add({ kind: 'expense', cat: 'transport', title: 'Yandex Go', amount: 24000, cur: 'UZS', acc: 'humo', date: new Date(now - 2.5 * 3600000) });
-  add({ kind: 'expense', cat: 'food', title: 'Korzinka', amount: 186400, cur: 'UZS', acc: 'uz', date: new Date(now - 50 * 60000) });
   // долги: выдача и возврат меняют баланс счёта, но не доход и не расход
   add({ kind: 'debt', sign: -1, debt: 2, title: 'Дал в долг · Сардор', amount: 300000, cur: 'UZS', acc: 'cash', date: ago(40, 19, 0) });
   add({ kind: 'debt', sign: -1, debt: 4, title: 'Дал в долг · Тимур', amount: 1000, cur: 'USD', acc: 'visa', date: ago(30, 15, 0) });
   add({ kind: 'debt', sign: -1, debt: 1, title: 'Дал в долг · Алишер', amount: 1600000, cur: 'UZS', acc: 'cash', date: ago(25, 17, 30) });
   add({ kind: 'debt', sign: 1, debt: 3, title: 'Взял в долг · Мама', amount: 500000, cur: 'UZS', acc: 'humo', date: ago(20, 12, 0) });
   add({ kind: 'debt', sign: 1, debt: 1, title: 'Возврат долга · Алишер', amount: 400000, cur: 'UZS', acc: 'cash', date: ago(18, 20, 10) });
+  // свежие операции, чтобы главная выглядела живой; они ещё не просмотрены — бейдж «3» на «Операциях»
+  const freshFrom = id;
+  add({ kind: 'expense', cat: 'fun', title: 'Кино', amount: 140000, cur: 'UZS', acc: 'humo', date: ago(1, 21, 10) });
+  add({ kind: 'expense', cat: 'transport', title: 'Yandex Go', amount: 24000, cur: 'UZS', acc: 'humo', date: new Date(now - 2.5 * 3600000) });
+  add({ kind: 'expense', cat: 'food', title: 'Korzinka', amount: 186400, cur: 'UZS', acc: 'uz', date: new Date(now - 50 * 60000) });
   // лимиты: подобраны так, чтобы проценты совпадали с макетом (82%, 62%, 103%)
   const mStart = new Date(today.getFullYear(), today.getMonth(), 1), spent = {};
   for (const o of ops) if (o.kind === 'expense' && o.date >= mStart) spent[o.cat] = (spent[o.cat] || 0) + conv(o.amount, o.cur, 'UZS');
@@ -487,6 +498,7 @@ function seed() {
   return {
     accounts, ops, budgets, nextId: id, tab: 'home', stack: [], hide: false, cur: 'UZS', period: '30д', chips: 'all', q: '', aPer: 'Полгода',
     overlay: null, undo: null, lastTotal: null, justAdded: null, debtTab: 'lent', chat: [],
+    opsSeen: freshFrom - 1, opsHi: freshFrom - 1, seenDebts: [], seenOver: [], // что уже видел пользователь (для бейджей)
     debts: [
       { id: 1, dir: 'lent', person: 'Алишер', amount: 1600000, cur: 'UZS', paid: 400000, due: due(2), pays: [{ amount: 400000, cur: 'UZS', date: ago(18, 20, 10), note: 'на Наличные' }] },
       { id: 2, dir: 'lent', person: 'Сардор', amount: 300000, cur: 'UZS', paid: 0, due: due(-9), pays: [] },
@@ -505,13 +517,14 @@ function seed() {
 function zeroState() {
   const s = seed();
   return { ...s, mine: true, accounts: s.accounts.map((a) => ({ ...a, num: '', initial: 0 })), ops: [], budgets: {}, debts: [], nextId: 1, nextDebt: 1, nextGoal: 3, chat: [],
+    opsSeen: 0, opsHi: 0, seenDebts: [], seenOver: [],
     goals: [{ id: 2, type: 'reserve', name: 'Неприкосновенный запас', target: null, cur: 'UZS', alloc: {} }] };
 }
 // Свои данные (после «Начать с нуля») хранятся только на этом устройстве, в браузере Telegram
 const STORE_KEY = 'who-wallet-prototype-mine-v1';
 function saveMine() {
   if (!S.mine) return;
-  try { localStorage.setItem(STORE_KEY, JSON.stringify({ accounts: S.accounts, ops: S.ops, budgets: S.budgets, debts: S.debts, goals: S.goals, nextId: S.nextId, nextDebt: S.nextDebt, nextGoal: S.nextGoal, cur: S.cur })); } catch (e) { /* хранилище недоступно */ }
+  try { localStorage.setItem(STORE_KEY, JSON.stringify({ accounts: S.accounts, ops: S.ops, budgets: S.budgets, debts: S.debts, goals: S.goals, nextId: S.nextId, nextDebt: S.nextDebt, nextGoal: S.nextGoal, cur: S.cur, opsSeen: S.opsSeen, seenDebts: S.seenDebts, seenOver: S.seenOver })); } catch (e) { /* хранилище недоступно */ }
 }
 function loadMine() {
   try {
@@ -602,10 +615,11 @@ function opAmount(o) {
   if (o.kind === 'goal') return { t: fmt(-o.amount, o.cur), cl: '' };
   return { t: fmt(o.amount, o.cur), cl: '' };
 }
-function opRow(o) {
+function opRow(o, opt) {
+  const unseen = !!(opt && opt.unseen);
   const m = metaOf(o), a = accOf(o.acc), amt = opAmount(o);
   const sub = o.kind === 'transfer' ? `${a.name} → ${accOf(o.to).name}` : `${m.name} · ${a.name}`;
-  return `<button class="op ${S.justAdded === o.id ? 'new' : ''}" data-act="op" data-id="${o.id}" style="--ic:var(${m.col})"><span class="ic">${ic(m.icon)}</span>
+  return `<button class="op ${S.justAdded === o.id ? 'new' : ''}${unseen ? ' unseen' : ''}" data-act="op" data-id="${o.id}" style="--ic:var(${m.col})"><span class="ic">${ic(m.icon)}</span>
     <span><span class="t">${esc(o.title)}</span><br><span class="s">${esc(sub)}</span></span>
     <span class="a"><span class="${amt.cl} money">${amt.t}</span><br><span class="s">${whenShort(o.date)}</span></span></button>`;
 }
@@ -684,7 +698,7 @@ function opsScreen() {
   <label class="search">${ic('search')}<input id="q" type="search" placeholder="Место, категория, счёт или сумма" value="${esc(S.q)}" autocomplete="off" aria-label="Поиск операций"></label>
   <div class="chips">${[['all', 'Все'], ['expense', 'Расходы'], ['income', 'Доходы'], ['transfer', 'Переводы и долги']].map(([k, l]) => `<button class="${S.chips === k ? 'on' : ''}" data-act="chip" data-k="${k}">${l}</button>`).join('')}</div>
   <div class="oplist">${groups.length ? groups.map((g) => { const tot = g.items.reduce((s, o) => s + (o.kind === 'expense' ? -opUZS(o) : o.kind === 'income' ? opUZS(o) : 0), 0);
-    return `<div class="day"><span>${dayLabel(g.d)}</span><span class="${tot < 0 ? 'neg' : tot > 0 ? 'pos' : ''} money">${tot ? fmt(tot, 'UZS', { sign: true, round: true }) : ''}</span></div>${g.items.map(opRow).join('')}`; }).join('')
+    return `<div class="day"><span>${dayLabel(g.d)}</span><span class="${tot < 0 ? 'neg' : tot > 0 ? 'pos' : ''} money">${tot ? fmt(tot, 'UZS', { sign: true, round: true }) : ''}</span></div>${g.items.map((o) => opRow(o, { unseen: o.id > S.opsHi })).join('')}`; }).join('')
     + (list.length > LIMIT ? `<p class="tiny muted" style="text-align:center">Показаны последние ${LIMIT} из ${list.length}. Уточните поиск, чтобы найти остальные.</p>` : '')
     : S.ops.length ? `<div class="empty">${ic('search')}<b style="color:var(--text)">Ничего не найдено</b><span class="small">Попробуйте другое слово или сумму</span></div>`
     : `<div class="empty">${ic('list')}<b style="color:var(--text)">Операций пока нет</b><span class="small">Нажмите «+» внизу, чтобы записать доход или расход</span></div>`}</div>`;
@@ -709,6 +723,7 @@ function analyticsScreen() {
   <div class="card" style="margin-top:14px"><div class="legendline"><span><i style="background:var(--income)"></i>Доходы</span><span><i style="background:var(--expense)"></i>Расходы</span></div>
     <div class="bars">${bars.map((b, i) => `<div class="g"><div class="pair"><span style="height:${((b.inc / max) * 120).toFixed(1)}px;background:var(--income);animation-delay:${i * 60}ms;${b.cur ? 'opacity:.55' : ''}"></span><span style="height:${((b.exp / max) * 120).toFixed(1)}px;background:var(--expense);animation-delay:${i * 60 + 30}ms;${b.cur ? 'opacity:.55' : ''}"></span></div><span class="m" style="${b.cur ? 'color:var(--text);font-weight:800' : ''}">${b.m}</span></div>`).join('')}</div>
     <div class="tiny muted" style="margin-top:8px">${MNOM[n.getMonth()]} ещё идёт, поэтому его столбики бледнее.</div></div>
+  ${overCats().map((k) => { const sp = cur.byCat[k] || 0; return `<button class="note" style="--nc:var(--expense);margin-top:14px;width:100%" data-act="push" data-to="limit" data-id="${k}">${ic('warn')}<span>${catOf(k).name}: ${sp - S.budgets[k] >= 1 ? `${Math.round((sp / S.budgets[k]) * 100)}% лимита, сверх на <span class="money">${fmt(sp - S.budgets[k], 'UZS', { round: true })}</span>` : 'лимит исчерпан'}</span></button>`; }).join('')}
   <div class="sec"><h3>Расходы за ${MNOM[n.getMonth()].toLowerCase()}</h3></div>
   <div class="card">${catsCur.map(([id, v]) => `<div class="catrow"><span>${catOf(id).name}</span><span class="track">${fill((v / maxCat) * 100, 'cat-' + id, `background:var(${catOf(id).col})`)}</span><b class="money" style="text-align:right;font-size:13px">${short(v)}</b></div>`).join('') || '<div class="empty">Расходов в этом месяце пока нет</div>'}</div>
   <button class="tip" style="--tc:var(--accent)" data-act="push" data-to="ai"><span class="ti">${ic('spark')}</span><span><span class="k">AI-помощник</span><br>Спросите, сколько ушло за неделю или каким будет расход к концу месяца.<br><span class="link">Спросить ›</span></span></button>`;
@@ -722,7 +737,7 @@ function accountsScreen() {
     <div class="between"><b class="money">${fmt(bal(a), a.cur)}</b>${a.cur !== 'UZS' ? `<span class="money">≈ ${fmt(conv(bal(a), a.cur, 'UZS'), 'UZS', { round: true })}</span>` : ''}</div>
     ${reservedOn(a.id) ? `<div class="between" style="font-size:12px"><span class="money">в резерве ${fmt(reservedOn(a.id), a.cur)}</span><span class="money">свободно ${fmt(freeOf(a), a.cur)}</span></div>` : ''}</button>`).join('')}</div>
   <div class="two" style="margin:6px 0 18px"><button class="btn sec2" data-act="add" data-mode="transfer">Перевести</button><button class="btn sec2" data-act="toast" data-msg="Добавление счёта появится в следующей версии прототипа">Новый счёт</button></div>
-  <button class="listrow" data-act="push" data-to="debts"><span class="ri">${ic('people')}</span><span><b>Долги</b><br><span class="tiny muted money">мне должны ${short(lent)} · я должен ${short(owe)}</span></span><span></span>${ic('right')}</button>
+  <button class="listrow" data-act="push" data-to="debts"><span class="ri">${ic('people')}</span><span><b>Долги</b><br><span class="tiny muted money">мне должны ${short(lent)} · я должен ${short(owe)}</span></span>${newDebts() ? `<span class="rbadge" aria-label="требуют внимания: ${newDebts()}">${newDebts()}</span>` : '<span></span>'}${ic('right')}</button>
   <button class="listrow" data-act="push" data-to="goal"><span class="ri">${ic('target')}</span><span><b>Цели и резерв</b><br><span class="tiny muted money">отложено ${short(reservedUZS())}${car ? ` · ${esc(car.name)} ${Math.round((goalSaved(car) / car.target) * 100)}%` : ' · целей пока нет'}</span></span><span></span>${ic('right')}</button>`;
 }
 
@@ -997,12 +1012,32 @@ function sheetHTML() {
 // ================= отрисовка =================
 const TABS = [['home', 'Главная', 'home'], ['ops', 'Операции', 'list'], null, ['analytics', 'Аналитика', 'chart'], ['accounts', 'Счета', 'wallet']];
 const RINGS = {}, WIDTHS = {};
-let lastKey = '', lastOverlayType = null, toastTimer = null;
+let lastKey = '', lastOverlayType = null, toastTimer = null, lastBadges = {};
 const view = () => (S.stack.length ? S.stack[S.stack.length - 1] : { s: S.tab });
+// ---- бейджи нижнего меню: число или точка вместо всплывающих окон; гаснут, когда раздел открыт ----
+const maxOpId = () => S.ops.reduce((m, o) => Math.max(m, o.id), 0);
+const attnDebts = () => { const t = new Date(); return liveDebts().filter((d) => d.paid < d.amount && d.due && dayDiff(d.due, t) <= 3); }; // просрочен или срок ≤ 3 дней
+const overCats = () => { const by = monthStats(0).byCat; return Object.keys(S.budgets).filter((k) => (by[k] || 0) >= S.budgets[k]); };
+const newDebts = () => attnDebts().filter((d) => !S.seenDebts.includes(d.id)).length;
+const badges = () => ({ ops: S.ops.filter((o) => o.id > S.opsSeen).length, accounts: newDebts(), analytics: overCats().some((k) => !S.seenOver.includes(k)) ? 'dot' : 0 });
+const BADGE_SAYS = { ops: (n) => `новых операций: ${n}`, accounts: (n) => `долги требуют внимания: ${n}`, analytics: () => 'лимит исчерпан' };
+function markSeen(v) {
+  const root = !S.stack.length;
+  if (root && S.tab === 'ops') { if (!lastKey.startsWith('ops:')) S.opsHi = S.opsSeen; S.opsSeen = Math.max(S.opsSeen, maxOpId()); } // точки в списке — до следующего входа
+  else if (root) S.opsHi = S.opsSeen;
+  if (root && S.tab === 'analytics') S.seenOver = [...new Set([...S.seenOver, ...overCats()])];
+  if (v.s === 'debts') S.seenDebts = [...new Set([...S.seenDebts, ...attnDebts().map((d) => d.id)])];
+}
+function tabBadge(k, n) {
+  const val = n === 'dot' ? 1 : n, bump = val > (lastBadges[k] || 0); lastBadges[k] = val;
+  if (!n) return '';
+  return n === 'dot' ? `<span class="tbadge dot${bump ? ' bump' : ''}"></span>` : `<span class="tbadge${bump ? ' bump' : ''}">${n > 9 ? '9+' : n}</span>`;
+}
 function render(opts = {}) { if (!opts.overlayOnly) { renderScreen(opts); saveMine(); } renderOverlay(); }
 function renderScreen(opts) {
   const v = view(), screen = document.getElementById('screen'), device = document.getElementById('device');
   const map = { home: homeScreen, ops: opsScreen, analytics: analyticsScreen, accounts: accountsScreen, limit: () => limitScreen(v.id), op: () => opScreen(v.id), debts: debtsScreen, debt: () => debtScreen(v.id), goal: goalScreen, ai: aiScreen, profile: profileScreen };
+  markSeen(v);
   const key = v.s + ':' + (v.id ?? ''), same = key === lastKey, st = screen.scrollTop;
   screen.innerHTML = map[v.s]();
   if (same) screen.querySelectorAll('.stagger').forEach((e) => e.classList.remove('stagger'));
@@ -1015,7 +1050,8 @@ function renderScreen(opts) {
   if (!same && opts.anim !== false) { void screen.offsetWidth; screen.classList.add(opts.back ? 'enter-back' : 'enter'); }
   screen.scrollTop = same && !opts.top ? st : 0;
   lastKey = key;
-  document.getElementById('tabbar').innerHTML = TABS.map((t) => t ? `<button class="tab ${S.tab === t[0] && !S.stack.length ? 'on' : ''}" data-act="tab" data-to="${t[0]}" ${S.tab === t[0] ? 'aria-current="page"' : ''}>${ic(t[2])}${t[1]}</button>` : `<button class="fab" data-act="add" data-mode="expense" aria-label="Добавить операцию">${ic('plus')}</button>`).join('');
+  const nb = badges();
+  document.getElementById('tabbar').innerHTML = TABS.map((t) => t ? `<button class="tab ${S.tab === t[0] && !S.stack.length ? 'on' : ''}" data-act="tab" data-to="${t[0]}" ${S.tab === t[0] ? 'aria-current="page"' : ''}${nb[t[0]] ? ` aria-label="${t[1]}, ${BADGE_SAYS[t[0]](nb[t[0]])}"` : ''}><span class="tic">${ic(t[2])}${tabBadge(t[0], nb[t[0]])}</span>${t[1]}</button>` : `<button class="fab" data-act="add" data-mode="expense" aria-label="Добавить операцию">${ic('plus')}</button>`).join('');
   // кольца и полосы: при первом показе растут с нуля, при обновлении — от прежнего значения
   const rings = [...screen.querySelectorAll('.ring .fg')], bars = [...screen.querySelectorAll('[data-w]')];
   rings.forEach((c) => { if (same && RINGS[c.dataset.k] != null) c.style.strokeDashoffset = RINGS[c.dataset.k]; });
