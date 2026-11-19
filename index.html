@@ -86,13 +86,73 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 /* нижнее меню */
 .tabbar { position: absolute; left: 0; right: 0; bottom: 0; height: 82px; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(12px);
   border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(5, 1fr); align-items: start; padding: 8px 6px 10px; z-index: 5; }
-.tab { display: grid; justify-items: center; gap: 4px; font-size: 11px; font-weight: 600; color: var(--muted); padding-top: 5px; text-align: center; }
+.tab { display: grid; justify-items: center; gap: 4px; font-size: 11px; font-weight: 600; color: var(--muted); padding-top: 5px; text-align: center; transition: color .25s; }
 .tab.on { color: var(--accent); font-weight: 800; }
 .tab svg.i { width: 24px; height: 24px; }
 .fab { justify-self: center; width: 56px; height: 56px; border-radius: 50%; background: var(--accent); color: var(--on-accent); display: grid; place-items: center;
   box-shadow: 0 10px 24px -8px color-mix(in srgb, var(--accent) 70%, transparent); transition: transform .15s; }
 .fab:active { transform: scale(.93); }
-.fab svg.i { width: 26px; height: 26px; stroke-width: 2.3; }
+.fab svg.i { width: 26px; height: 26px; stroke-width: 2.3; transition: transform .45s cubic-bezier(.3,1.5,.5,1); }
+.fab:active svg.i { transform: rotate(90deg); }
+/* ---- 8 стилей нижнего меню (подборка Bottom navigation) ---- */
+.tabbar { transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+.tl { white-space: nowrap; }
+/* иконка активной вкладки прорисовывается заново и подпрыгивает */
+.ti.pop { animation: tiPop .55s cubic-bezier(.3,1.5,.5,1); }
+.ti.pop path { stroke-dasharray: 1; animation: tiDraw .6s ease-out; }
+@keyframes tiPop { 0% { transform: scale(.7) translateY(3px); } 55% { transform: scale(1.2) translateY(-3px); } 100% { transform: none; } }
+@keyframes tiDraw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+/* 1 Sliding bar: полоска едет к активной вкладке */
+.tb-ind { position: absolute; top: -1px; left: 0; width: 30px; height: 4px; border-radius: 0 0 4px 4px; background: var(--accent); display: none;
+  transform: translateX(calc(var(--x, -60px) - 50%)); transition: transform .5s cubic-bezier(.3,1.35,.45,1); box-shadow: 0 2px 10px color-mix(in srgb, var(--accent) 55%, transparent); }
+.tb-sliding .tb-ind { display: block; }
+/* 2 Expanding: у неактивных только иконка, активная раскрывается в «таблетку» с подписью */
+.tb-expanding { display: flex; justify-content: space-around; align-items: flex-start; padding: 8px 8px 10px; }
+.tb-expanding .tab { display: flex; align-items: center; gap: 0; height: 44px; margin-top: 6px; padding: 0 11px; border-radius: 22px; font-size: 13px;
+  transition: background .35s, padding .4s cubic-bezier(.2,.8,.2,1), gap .4s, color .25s; }
+.tb-expanding .tl { max-width: 0; opacity: 0; overflow: hidden; transition: max-width .45s cubic-bezier(.2,.8,.2,1), opacity .25s; }
+.tb-expanding .tab.on { background: color-mix(in srgb, var(--accent) 14%, transparent); gap: 7px; padding: 0 15px 0 12px; }
+.tb-expanding .tab.on .tl { max-width: 100px; opacity: 1; }
+.tb-expanding .fab { flex: none; }
+/* 3 Center button: главная кнопка приподнята над панелью */
+.tb-center .fab { width: 62px; height: 62px; transform: translateY(-24px); box-shadow: 0 0 0 6px var(--bg), 0 16px 28px -10px color-mix(in srgb, var(--accent) 80%, transparent); }
+.tb-center .fab:active { transform: translateY(-24px) scale(.93); }
+.tb-center .fab svg.i { width: 28px; height: 28px; }
+/* 4 Floating: док парит над контентом, контент уходит под него */
+.tb-floating { left: 14px; right: 14px; bottom: 14px; height: 66px; border-radius: 24px; border: 1px solid var(--line); align-items: center; padding: 6px 4px;
+  background: color-mix(in srgb, var(--surface) 84%, transparent); -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4);
+  box-shadow: 0 18px 40px -16px rgba(0,0,0,.4); }
+.tb-floating .tab { padding-top: 0; gap: 3px; font-size: 10.5px; }
+.tb-floating .fab { width: 50px; height: 50px; border-radius: 17px; }
+/* 5 Hide on scroll: при прокрутке вниз панель уезжает, при прокрутке вверх возвращается */
+.tb-hide.tb-hidden { transform: translateY(110%); }
+.device.flow .screen:not(.full) { bottom: 0; padding-bottom: 118px; }
+/* 7 Notch: кнопка «+» сидит в изогнутом вырезе панели */
+.tb-notch { background: none; border-top: 0; -webkit-backdrop-filter: none; backdrop-filter: none; filter: drop-shadow(0 -1px 0 var(--line)) drop-shadow(0 -6px 16px rgba(0,0,0,.06)); }
+.tb-notch::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--surface); border-radius: 22px 22px 0 0;
+  -webkit-mask: radial-gradient(circle 38px at 50% 0, transparent 37px, #000 38px); mask: radial-gradient(circle 38px at 50% 0, transparent 37px, #000 38px); }
+.tb-notch .fab { transform: translateY(-34px); }
+.tb-notch .fab:active { transform: translateY(-34px) scale(.93); }
+.device[data-tb="notch"] .toast, .device[data-tb="center"] .toast { bottom: 122px; }
+/* 8 Dot: спокойно — только иконки, активную отмечает точка */
+.tb-dot { border-top-color: transparent; }
+.tb-dot .tl { display: none; }
+.tb-dot .tab { padding-top: 12px; gap: 0; }
+.tb-dot .tic::after { content: ""; position: absolute; left: 50%; bottom: -11px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: var(--accent);
+  transform: scale(0); transition: transform .4s cubic-bezier(.3,1.6,.5,1); }
+.tb-dot .tab.on .tic::after { transform: scale(1); }
+.tb-dot .tbadge:not(.dot) { font-size: 0; min-width: 0; width: 10px; height: 10px; padding: 0; top: -2px; left: 17px; }
+.tb-dot .fab { width: 50px; height: 50px; box-shadow: none; }
+/* выбор стиля: полоска над меню, меню остаётся видно и живо */
+.tbstrip { position: absolute; left: 12px; right: 12px; bottom: 132px; z-index: 12; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 10px 12px 12px;
+  box-shadow: 0 20px 50px -18px rgba(0,0,0,.45); animation: rise .3s cubic-bezier(.2,.8,.2,1); }
+.tbstrip .between b { font-size: 15px; font-weight: 800; }
+.tbchips { display: flex; gap: 8px; overflow-x: auto; margin: 8px -12px 0; padding: 0 12px; scrollbar-width: none; }
+.tbchips::-webkit-scrollbar { display: none; }
+.tbchips button { flex: none; width: 128px; display: grid; gap: 2px; text-align: left; padding: 9px 11px; border-radius: 14px; background: var(--surface2); border: 1px solid var(--line); transition: border-color .2s, background .2s; }
+.tbchips button.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.tbchips b { font-size: 13px; font-weight: 800; }
+.tbchips span { font-size: 11px; color: var(--muted); line-height: 1.3; }
 /* бейджи: новое видно прямо на вкладке, без всплывающих окон */
 .tab .tic { position: relative; display: grid; place-items: center; }
 .tbadge { position: absolute; top: -7px; left: 13px; min-width: 19px; height: 19px; padding: 0 5px; border-radius: 10px; background: var(--badge); color: var(--on-badge);
@@ -394,6 +454,7 @@ html.no-anim .device { width: 390px; height: 844px; min-height: 0; border-radius
       <li>Аналитика → «Спросить» → AI-помощник отвечает по этим же данным.</li>
       <li><b>Бейджи на нижнем меню:</b> «Операции» — сколько новых записей (в списке они отмечены точкой), «Счета» — долги с просрочкой или сроком в ближайшие 3 дня, точка на «Аналитике» — лимит категории исчерпан. Бейдж гаснет, когда раздел открыт. Добавьте расход на главной — счётчик на «Операциях» подпрыгнет.</li>
       <li><b>Боковое меню:</b> кнопка ☰ слева вверху → плавающая панель со всеми разделами, бейджами и профилем. Закрывается крестиком, тапом мимо панели или свайпом влево.</li>
+      <li><b>8 стилей нижнего меню:</b> ☰ → «Нижнее меню» (или Профиль → «Нижнее меню»): Sliding bar, Expanding, Center button, Floating, Hide on scroll, Badges, Notch, Dot. Меню меняется сразу, выбор запоминается. Иконка вкладки при переходе прорисовывается и подпрыгивает.</li>
       <li>Аватар R → профиль: светлая и тёмная тема.</li>
     </ol>
     <p class="small">На компьютере сумму можно набирать с клавиатуры, Esc закрывает окно.</p>
@@ -411,7 +472,7 @@ const P = {
   people: 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M16 4.5a3 3 0 0 1 0 6M18 14c2.2.6 3.5 2.6 3.5 5',
   eye: 'M2.5 12C5 7.5 8.2 5.5 12 5.5s7 2 9.5 6.5c-2.5 4.5-5.7 6.5-9.5 6.5S5 16.5 2.5 12zM12 14.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',
   eyeoff: 'M3 3l18 18M10.6 6.1A9 9 0 0 1 12 6c3.8 0 7 2 9.5 6-1 1.7-2.1 3-3.3 4M6.6 7.6C5 8.7 3.6 10.2 2.5 12c2.5 4.5 5.7 6.5 9.5 6.5 1.6 0 3-.3 4.3-1',
-  menu: 'M4 7h16M4 12h16M4 17h10', bell: 'M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21a2 2 0 0 0 4 0', cal: 'M4 6h16v14H4zM4 10h16M8 3v5M16 3v5', chev: 'M7 10l5 5 5-5',
+  menu: 'M4 7h16M4 12h16M4 17h10', layout: 'M5 4h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zM4 15h16M9 17.5h.01M12 17.5h.01M15 17.5h.01', bell: 'M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21a2 2 0 0 0 4 0', cal: 'M4 6h16v14H4zM4 10h16M8 3v5M16 3v5', chev: 'M7 10l5 5 5-5',
   cart: 'M3 5h3l2.5 10h10l2-7H7.5M10 20h.01M17 20h.01', car: 'M4 16v-3l2.5-5h11l2.5 5v3zM4 16v2M20 16v2M7.5 13h.01M16.5 13h.01', cup: 'M5 8h11v5a5.5 5.5 0 0 1-11 0zM16 9.5h1.5a2.5 2.5 0 0 1 0 5H16M6 21h9',
   bag: 'M5 8h14l-1 12H6zM9 8V7a3 3 0 0 1 6 0v1', house: 'M4 11l8-7 8 7v9h-5v-5h-6v5H4z', bulb: 'M9.5 17h5M10.5 20.5h3M8.5 14c-2-1.4-3-3.5-2.4-5.8a6 6 0 0 1 11.8 0c.6 2.3-.4 4.4-2.4 5.8z',
   heart: 'M12 20c-6-4-9-7.4-9-11a4.6 4.6 0 0 1 9-1.6A4.6 4.6 0 0 1 21 9c0 3.6-3 7-9 11z', star: 'M12 3.5l2.6 5.5 6 .7-4.5 4.1 1.2 6-5.3-3-5.3 3 1.2-6L3.4 9.7l6-.7z',
@@ -909,6 +970,7 @@ function profileScreen() {
   <div class="row" style="margin-bottom:18px"><span class="iconbtn" style="width:56px;height:56px;background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent);font-size:22px;font-weight:800">${esc((tgName() || 'R')[0].toUpperCase())}</span><div><b style="font-size:18px">${S.mine ? esc(tgName() || 'Мой профиль') : 'Демо-профиль'}</b><br><span class="small muted">${S.accounts.length} счёта · ${S.ops.length} операций${S.mine ? ' · свои данные' : ' · демо-данные'}</span></div></div>
   <div class="small muted" style="font-weight:700;margin-bottom:8px">Тема</div>
   <div class="seg"><button class="${th === 'auto' ? 'on' : ''}" data-act="theme" data-t="auto">Как в Telegram</button><button class="${th === 'light' ? 'on' : ''}" data-act="theme" data-t="light">Светлая</button><button class="${th === 'dark' ? 'on' : ''}" data-act="theme" data-t="dark">Тёмная</button></div>
+  <button class="listrow" style="margin-top:14px" data-act="tbopen"><span class="ri">${ic('layout')}</span><span><b>Нижнее меню</b><br><span class="tiny muted">${TB_STYLES.findIndex((x) => x[0] === TB) + 1} ${TB_STYLES.find((x) => x[0] === TB)[1]} · 8 стилей</span></span><span></span>${ic('right')}</button>
   <div class="small muted" style="font-weight:700;margin:16px 0 8px">Язык</div>
   <div class="seg"><button class="on">Русский</button><button data-act="toast" data-msg="Узбекский язык появится в следующей версии прототипа">O‘zbekcha</button></div>
   <div style="margin-top:18px">${[['coin', 'Основная валюта', 'UZS'], ['bell', 'Ежедневный отчёт', '21:00'], ['lock', 'Вход в приложение', 'Face ID'], ['globe', 'О приложении', 'прототип']].map(([i, t, v]) => `<button class="listrow" data-act="toast" data-msg="«${t}» — в следующей версии прототипа"><span class="ri">${ic(i)}</span><b>${t}</b><span class="small muted">${v}</span>${ic('right')}</button>`).join('')}</div>
@@ -940,12 +1002,16 @@ function sideHTML() {
     ${item('home', 'Главная', 'home')}${item('ops', 'Операции', 'list', cnt(nb.ops))}${item('analytics', 'Аналитика', 'chart', cnt(nb.analytics))}${item('accounts', 'Счета', 'wallet')}
     <div class="slabel">Деньги</div>
     ${item('debts', 'Долги', 'people', cnt(nb.accounts))}${item('goal', 'Цели и резерв', 'target')}${item('ai', 'AI-помощник', 'spark')}${item('cal', 'Календарь', 'cal', '<span class="stag">скоро</span>')}
+    <div class="slabel">Вид</div>
+    ${item('tbpick', 'Нижнее меню', 'layout', `<span class="stag">${TB_STYLES.findIndex((x) => x[0] === TB) + 1} ${TB_STYLES.find((x) => x[0] === TB)[1]}</span>`)}
     <div class="sfoot"><button class="sme" data-act="sidego" data-to="profile"><span class="av">${esc((tgName() || 'R')[0].toUpperCase())}</span><span style="min-width:0"><b>${esc(me)}</b><span class="tiny">Профиль и настройки</span></span>${ic('right')}</button></div>
   </nav>`;
 }
 function sheetHTML() {
   const o = S.overlay; if (!o) return '';
   if (o.type === 'side') return sideHTML();
+  if (o.type === 'tbpick') return `<div class="tbstrip" role="dialog" aria-label="Стиль нижнего меню"><div class="between"><b>Нижнее меню</b><button class="iconbtn sclose" data-act="close" aria-label="Закрыть">${ic('close')}</button></div>
+    <div class="tbchips">${TB_STYLES.map(([k, en, ru], i) => `<button class="${TB === k ? 'on' : ''}" data-act="tbstyle" data-k="${k}" aria-pressed="${TB === k}"><b>${i + 1} ${en}</b><span>${ru}</span></button>`).join('')}</div></div>`;
   let body = '';
   if (o.type === 'add') {
     const m = o.mode, A = accOf(o.acc), B = accOf(o.to), v = amountVal(o.input);
@@ -1091,6 +1157,47 @@ function tabBadge(k, n) {
   if (!n) return '';
   return n === 'dot' ? `<span class="tbadge dot${bump ? ' bump' : ''}"></span>` : `<span class="tbadge${bump ? ' bump' : ''}">${n > 9 ? '9+' : n}</span>`;
 }
+// ---- нижнее меню: один раз строим кнопки, дальше только переключаем классы — так работают анимации ----
+const TB_STYLES = [['sliding', 'Sliding bar', 'полоска едет к вкладке'], ['expanding', 'Expanding', 'вкладка раскрывается'], ['center', 'Center button', 'кнопка «+» над панелью'],
+  ['floating', 'Floating', 'док парит над экраном'], ['hide', 'Hide on scroll', 'прячется при прокрутке'], ['badges', 'Badges', 'классика со счётчиками'],
+  ['notch', 'Notch', '«+» в изогнутом вырезе'], ['dot', 'Dot', 'иконки и точка']];
+const TB_KEY = 'who-wallet-tabbar-style';
+let TB = (() => { try { const v = localStorage.getItem(TB_KEY); return TB_STYLES.some((x) => x[0] === v) ? v : 'sliding'; } catch (e) { return 'sliding'; } })();
+let lastActive = null, lastScrollY = 0;
+function buildTabbar() {
+  const bar = document.getElementById('tabbar');
+  bar.innerHTML = '<span class="tb-ind" aria-hidden="true"></span>' + TABS.map((t) => (t ? `<button class="tab" data-act="tab" data-to="${t[0]}"><span class="tic">${ic(t[2], 'i ti')}<span class="tbs"></span></span><span class="tl">${t[1]}</span></button>`
+    : `<button class="fab" data-act="add" data-mode="expense" aria-label="Добавить операцию">${ic('plus')}</button>`)).join('');
+  bar.querySelectorAll('.ti path').forEach((p) => p.setAttribute('pathLength', '1'));
+}
+function applyTbStyle() {
+  const bar = document.getElementById('tabbar'), dev = document.getElementById('device');
+  TB_STYLES.forEach(([k]) => bar.classList.toggle('tb-' + k, k === TB));
+  bar.classList.remove('tb-hidden'); dev.dataset.tb = TB;
+  dev.classList.toggle('flow', TB === 'floating' || TB === 'hide');
+}
+function moveInd(first) {
+  const bar = document.getElementById('tabbar'), ind = bar.querySelector('.tb-ind'), on = bar.querySelector('.tab.on');
+  if (!ind || !on || bar.hidden || TB !== 'sliding') return;
+  const c = on.querySelector('.tic'), x = c.offsetLeft + c.offsetWidth / 2;
+  if (first || !ind.dataset.ready) { ind.style.transition = 'none'; ind.style.setProperty('--x', x + 'px'); void ind.offsetWidth; ind.style.transition = ''; ind.dataset.ready = '1'; return; }
+  if (ind.style.getPropertyValue('--x') === x + 'px') return;
+  ind.style.setProperty('--x', x + 'px');
+  try { ind.animate([{ width: '30px' }, { width: '52px' }, { width: '30px' }], { duration: 480, easing: 'ease-out' }); } catch (e) { /* без растяжки */ }
+}
+function popIcon(b) { const ti = b && b.querySelector('.ti'); if (!ti) return; ti.classList.remove('pop'); void ti.offsetWidth; ti.classList.add('pop'); }
+function updateTabbar() {
+  const bar = document.getElementById('tabbar'), nb = badges(), active = S.stack.length ? null : S.tab;
+  bar.querySelectorAll('.tab').forEach((b) => {
+    const k = b.dataset.to, n = nb[k], on = k === active;
+    b.classList.toggle('on', on);
+    if (S.tab === k) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+    if (n) b.setAttribute('aria-label', `${b.querySelector('.tl').textContent}, ${BADGE_SAYS[k](n)}`); else b.removeAttribute('aria-label');
+    b.querySelector('.tbs').innerHTML = tabBadge(k, n);
+    if (on && lastActive && lastActive !== k) popIcon(b);
+  });
+  if (active) { moveInd(!lastActive); lastActive = active; }
+}
 function render(opts = {}) { if (!opts.overlayOnly) { renderScreen(opts); saveMine(); } renderOverlay(); }
 function renderScreen(opts) {
   const v = view(), screen = document.getElementById('screen'), device = document.getElementById('device');
@@ -1108,8 +1215,7 @@ function renderScreen(opts) {
   if (!same && opts.anim !== false) { void screen.offsetWidth; screen.classList.add(opts.back ? 'enter-back' : 'enter'); }
   screen.scrollTop = same && !opts.top ? st : 0;
   lastKey = key;
-  const nb = badges();
-  document.getElementById('tabbar').innerHTML = TABS.map((t) => t ? `<button class="tab ${S.tab === t[0] && !S.stack.length ? 'on' : ''}" data-act="tab" data-to="${t[0]}" ${S.tab === t[0] ? 'aria-current="page"' : ''}${nb[t[0]] ? ` aria-label="${t[1]}, ${BADGE_SAYS[t[0]](nb[t[0]])}"` : ''}><span class="tic">${ic(t[2])}${tabBadge(t[0], nb[t[0]])}</span>${t[1]}</button>` : `<button class="fab" data-act="add" data-mode="expense" aria-label="Добавить операцию">${ic('plus')}</button>`).join('');
+  updateTabbar();
   // кольца и полосы: при первом показе растут с нуля, при обновлении — от прежнего значения
   const rings = [...screen.querySelectorAll('.ring .fg')], bars = [...screen.querySelectorAll('[data-w]')];
   rings.forEach((c) => { if (same && RINGS[c.dataset.k] != null) c.style.strokeDashoffset = RINGS[c.dataset.k]; });
@@ -1121,11 +1227,11 @@ function renderScreen(opts) {
   if (b) { const to = Number(b.dataset.v), from = S.lastTotal == null ? to * 0.94 : S.lastTotal; countUp(b, from, to); S.lastTotal = to; }
 }
 function renderOverlay() {
-  const host = document.getElementById('overlay'), prev = host.querySelector('.sheet, .side'), st = prev ? prev.scrollTop : 0;
+  const host = document.getElementById('overlay'), prev = host.querySelector('.sheet, .side'), st = prev ? prev.scrollTop : 0, chips = host.querySelector('.tbchips'), sl = chips ? chips.scrollLeft : 0;
   const type = S.overlay ? S.overlay.type : null, keep = !!type && type === lastOverlayType;
   host.innerHTML = sheetHTML();
-  if (type && lastOverlayType) host.querySelector('.scrim').classList.add('still');
-  if (keep) { const s = host.querySelector('.sheet, .side'); if (s) { s.classList.add('still'); s.scrollTop = st; } }
+  const sc = host.querySelector('.scrim'); if (type && lastOverlayType && sc) sc.classList.add('still');
+  if (keep) { const s = host.querySelector('.sheet, .side, .tbstrip'); if (s) { s.classList.add('still'); s.scrollTop = st; } const c = host.querySelector('.tbchips'); if (c) c.scrollLeft = sl; }
   lastOverlayType = type;
 }
 let countRaf = 0;
@@ -1138,9 +1244,9 @@ function countUp(el, from, to) {
   countRaf = requestAnimationFrame(step);
 }
 /** закрыть боковую панель с короткой анимацией ухода влево */
-function closeSide() {
+function closeSide(then) {
   const host = document.getElementById('overlay'), side = host.querySelector('.side');
-  const done = () => { if (S.overlay && S.overlay.type === 'side') { S.overlay = null; render({ overlayOnly: true }); } };
+  const done = () => { if (S.overlay && S.overlay.type === 'side') { S.overlay = null; render({ overlayOnly: true }); } if (then) then(); };
   if (!side || document.documentElement.classList.contains('no-anim') || matchMedia('(prefers-reduced-motion: reduce)').matches) return done();
   side.classList.add('out'); host.querySelector('.scrim').classList.add('out');
   setTimeout(done, 170);
@@ -1235,9 +1341,19 @@ const handlers = {
   save: () => saveAdd(),
   close: () => { if (S.overlay && S.overlay.type === 'side') { closeSide(); return; } S.overlay = S.overlay && S.overlay.type === 'pickacc' ? S.overlay.parent : null; render({ overlayOnly: true }); },
   side: () => { S.overlay = { type: 'side' }; haptic(); render({ overlayOnly: true }); },
+  tbopen: () => { S.stack = []; S.overlay = { type: 'tbpick' }; render({ back: true }); },
+  tbstyle: (d) => {
+    if (TB === d.k) return;
+    TB = d.k; try { localStorage.setItem(TB_KEY, TB); } catch (e) { /* выбор не запомнится */ }
+    haptic(); applyTbStyle();
+    document.querySelectorAll('.tbchips button').forEach((b) => { b.classList.toggle('on', b.dataset.k === TB); b.setAttribute('aria-pressed', String(b.dataset.k === TB)); });
+    const scr = document.getElementById('screen'); lastScrollY = scr.scrollTop;
+    requestAnimationFrame(() => { moveInd(true); popIcon(document.querySelector('#tabbar .tab.on')); });
+  },
   sidego: (d) => {
     haptic();
     if (d.to === 'cal') { closeSide(); toast('<b>Календарь платежей появится в следующей версии прототипа</b>'); return; }
+    if (d.to === 'tbpick') { closeSide(() => { S.overlay = { type: 'tbpick' }; render({ overlayOnly: true }); }); return; }
     if (TABS.some((t) => t && t[0] === d.to)) { S.tab = d.to; S.stack = []; } else S.stack = [{ s: d.to }];
     render({ top: true }); closeSide(); // экран меняется под панелью, панель уезжает
   },
@@ -1362,6 +1478,13 @@ device.addEventListener('input', (e) => {
   S.q = e.target.value; const pos = e.target.selectionStart; render({ anim: false });
   const q = document.getElementById('q'); q.focus(); try { q.setSelectionRange(pos, pos); } catch (err) { /* type=search */ }
 });
+document.getElementById('screen').addEventListener('scroll', (e) => {
+  if (TB !== 'hide') return;
+  const y = e.target.scrollTop, bar = document.getElementById('tabbar');
+  if (y > lastScrollY + 6 && y > 60) bar.classList.add('tb-hidden'); else if (y < lastScrollY - 6 || y < 60) bar.classList.remove('tb-hidden');
+  lastScrollY = y;
+}, { passive: true });
+addEventListener('resize', () => moveInd(true));
 let swipeX = null;
 device.addEventListener('touchstart', (e) => { swipeX = S.overlay && S.overlay.type === 'side' ? e.touches[0].clientX : null; }, { passive: true });
 device.addEventListener('touchend', (e) => { if (swipeX != null && swipeX - e.changedTouches[0].clientX > 60) handlers.close(); swipeX = null; }, { passive: true });
@@ -1380,6 +1503,7 @@ const openDebt = (id) => [() => handlers.push({ to: 'debts' }), () => handlers.p
 const SHOT = {
   'shot-home': [],
   'shot-side': [() => handlers.side()],
+  'shot-tbpick': [() => handlers.tbopen()],
   'shot-zero': [() => { S = zeroState(); render({ anim: false }); }],
   'shot-zero-profile': [() => { S = zeroState(); S.stack = [{ s: 'profile' }]; render({ anim: false }); }],
   'shot-newdebt': [() => { S = zeroState(); handlers.push({ to: 'debts' }); handlers.newdebt(); S.overlay.person = 'Алишер'; }, ...keys('300000')],
@@ -1394,6 +1518,8 @@ const SHOT = {
 };
 if (location.hash.startsWith('#shot-')) document.documentElement.classList.add('no-anim');
 S = (!location.hash.startsWith('#shot-') && loadMine()) || seed();
+{ const m = location.hash.match(/^#shot-tb-(\w+)$/); if (m && TB_STYLES.some((x) => x[0] === m[1])) TB = m[1]; } // #shot-tb-notch — снимок стиля без сохранения
+buildTabbar(); applyTbStyle();
 render({ top: true });
 (SHOT[location.hash.slice(1)] || []).forEach((fn) => fn());
 })();
