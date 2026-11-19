@@ -101,6 +101,49 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 .tbadge.bump { animation: bump .55s cubic-bezier(.3,1.6,.5,1); }
 @keyframes bump { 0% { transform: scale(.2); } 55% { transform: scale(1.25); } 100% { transform: scale(1); } }
 .rbadge { min-width: 22px; height: 22px; padding: 0 7px; border-radius: 11px; background: var(--badge); color: var(--on-badge); font-size: 12px; font-weight: 800; line-height: 22px; text-align: center; }
+/* боковое меню «Floating»: панель парит с отступами от краёв, не прилипает к экрану */
+.titlebar { display: flex; align-items: center; gap: 12px; margin: 4px 0 14px; }
+.titlebar .h-title { margin: 0; }
+.greet b { text-wrap: balance; font-size: clamp(16px, 4.9vw, 20px); }
+@media (max-width: 360px) { .greet .muted { font-size: 13px; } .greet .demo { display: none; } } /* «демо» видно в боковом меню */
+.side { position: absolute; z-index: 11; top: 12px; bottom: 12px; left: 12px; width: min(292px, calc(100% - 56px)); display: flex; flex-direction: column; gap: 2px;
+  background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid var(--line); border-radius: 26px;
+  padding: 14px 12px 12px; box-shadow: 0 28px 70px -20px rgba(0,0,0,.5), 0 2px 8px rgba(0,0,0,.08); overflow-y: auto; scrollbar-width: none; transform-origin: left center;
+  animation: sideIn .4s cubic-bezier(.2,1,.3,1); }
+.side::-webkit-scrollbar { display: none; }
+@keyframes sideIn { from { opacity: 0; transform: translateX(-30px) scale(.96); } }
+.side.out { animation: sideOut .17s ease-in forwards; }
+.scrim.out { animation: fadeOut .17s ease-in forwards; }
+@keyframes sideOut { to { opacity: 0; transform: translateX(-22px) scale(.97); } }
+@keyframes fadeOut { to { opacity: 0; } }
+.side > * { animation: rise .35s cubic-bezier(.2,.8,.2,1) backwards; }
+.side > *:nth-child(2) { animation-delay: .03s } .side > *:nth-child(3) { animation-delay: .05s } .side > *:nth-child(4) { animation-delay: .07s }
+.side > *:nth-child(5) { animation-delay: .09s } .side > *:nth-child(6) { animation-delay: .11s } .side > *:nth-child(n+7) { animation-delay: .13s }
+.side.still > * { animation: none; }
+.shead { display: grid; grid-template-columns: 40px minmax(0, 1fr) 36px; gap: 10px; align-items: center; padding: 2px 2px 12px; margin-bottom: 4px; border-bottom: 1px solid var(--line); }
+.shead b { display: block; font-size: 16px; font-weight: 800; }
+.shead .tiny { display: block; color: var(--muted); }
+.slogo { width: 40px; height: 40px; border-radius: 13px; background: var(--accent); color: var(--on-accent); display: grid; place-items: center; }
+.slogo svg.i { width: 21px; height: 21px; }
+.sclose { width: 36px; height: 36px; background: var(--surface2); }
+.sclose svg.i { width: 18px; height: 18px; }
+.slabel { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); padding: 12px 10px 5px; }
+.sitem { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; align-items: center; min-height: 46px; padding: 5px 10px 5px 6px; border-radius: 14px;
+  font-size: 15px; font-weight: 700; color: var(--text); width: 100%; text-align: left; transition: background .15s; }
+.sitem:active { background: var(--surface2); }
+.sitem .sic { width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; color: var(--muted); }
+.sitem .sic svg.i { width: 20px; height: 20px; }
+.sitem.on { background: color-mix(in srgb, var(--accent) 13%, transparent); color: var(--accent); font-weight: 800; }
+.sitem.on .sic { color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); }
+.sdot { width: 9px; height: 9px; border-radius: 50%; background: var(--badge); margin-right: 6px; }
+.stag { font-size: 11px; font-weight: 800; color: var(--muted); background: var(--surface2); padding: 3px 8px; border-radius: 999px; }
+.sfoot { margin-top: auto; padding-top: 12px; }
+.sme { display: grid; grid-template-columns: 40px minmax(0, 1fr) 18px; gap: 10px; align-items: center; width: 100%; text-align: left; padding: 10px; border-radius: 18px;
+  background: var(--surface2); border: 1px solid var(--line); }
+.sme .av { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); font-weight: 800; }
+.sme b { display: block; font-size: 14px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sme .tiny { color: var(--muted); }
+.sme > svg.i { width: 18px; height: 18px; color: var(--faint); }
 .op.unseen .t::after { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-left: 6px; vertical-align: 2px; }
 
 /* общие элементы */
@@ -350,6 +393,7 @@ html.no-anim .device { width: 390px; height: 844px; min-height: 0; border-radius
       <li>Расход больше баланса счёта — приложение попросит подтвердить минус. Карточка долга → «Удалить долг»: два варианта.</li>
       <li>Аналитика → «Спросить» → AI-помощник отвечает по этим же данным.</li>
       <li><b>Бейджи на нижнем меню:</b> «Операции» — сколько новых записей (в списке они отмечены точкой), «Счета» — долги с просрочкой или сроком в ближайшие 3 дня, точка на «Аналитике» — лимит категории исчерпан. Бейдж гаснет, когда раздел открыт. Добавьте расход на главной — счётчик на «Операциях» подпрыгнет.</li>
+      <li><b>Боковое меню:</b> кнопка ☰ слева вверху → плавающая панель со всеми разделами, бейджами и профилем. Закрывается крестиком, тапом мимо панели или свайпом влево.</li>
       <li>Аватар R → профиль: светлая и тёмная тема.</li>
     </ol>
     <p class="small">На компьютере сумму можно набирать с клавиатуры, Esc закрывает окно.</p>
@@ -367,7 +411,7 @@ const P = {
   people: 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M16 4.5a3 3 0 0 1 0 6M18 14c2.2.6 3.5 2.6 3.5 5',
   eye: 'M2.5 12C5 7.5 8.2 5.5 12 5.5s7 2 9.5 6.5c-2.5 4.5-5.7 6.5-9.5 6.5S5 16.5 2.5 12zM12 14.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',
   eyeoff: 'M3 3l18 18M10.6 6.1A9 9 0 0 1 12 6c3.8 0 7 2 9.5 6-1 1.7-2.1 3-3.3 4M6.6 7.6C5 8.7 3.6 10.2 2.5 12c2.5 4.5 5.7 6.5 9.5 6.5 1.6 0 3-.3 4.3-1',
-  bell: 'M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21a2 2 0 0 0 4 0', cal: 'M4 6h16v14H4zM4 10h16M8 3v5M16 3v5', chev: 'M7 10l5 5 5-5',
+  menu: 'M4 7h16M4 12h16M4 17h10', bell: 'M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21a2 2 0 0 0 4 0', cal: 'M4 6h16v14H4zM4 10h16M8 3v5M16 3v5', chev: 'M7 10l5 5 5-5',
   cart: 'M3 5h3l2.5 10h10l2-7H7.5M10 20h.01M17 20h.01', car: 'M4 16v-3l2.5-5h11l2.5 5v3zM4 16v2M20 16v2M7.5 13h.01M16.5 13h.01', cup: 'M5 8h11v5a5.5 5.5 0 0 1-11 0zM16 9.5h1.5a2.5 2.5 0 0 1 0 5H16M6 21h9',
   bag: 'M5 8h14l-1 12H6zM9 8V7a3 3 0 0 1 6 0v1', house: 'M4 11l8-7 8 7v9h-5v-5h-6v5H4z', bulb: 'M9.5 17h5M10.5 20.5h3M8.5 14c-2-1.4-3-3.5-2.4-5.8a6 6 0 0 1 11.8 0c.6 2.3-.4 4.4-2.4 5.8z',
   heart: 'M12 20c-6-4-9-7.4-9-11a4.6 4.6 0 0 1 9-1.6A4.6 4.6 0 0 1 21 9c0 3.6-3 7-9 11z', star: 'M12 3.5l2.6 5.5 6 .7-4.5 4.1 1.2 6-5.3-3-5.3 3 1.2-6L3.4 9.7l6-.7z',
@@ -623,6 +667,7 @@ function opRow(o, opt) {
     <span><span class="t">${esc(o.title)}</span><br><span class="s">${esc(sub)}</span></span>
     <span class="a"><span class="${amt.cl} money">${amt.t}</span><br><span class="s">${whenShort(o.date)}</span></span></button>`;
 }
+const menuBtn = () => `<button class="iconbtn" data-act="side" aria-label="Открыть меню" aria-haspopup="dialog">${ic('menu')}</button>`;
 const backHdr = (title, sub = '') => `<div class="back"><button class="iconbtn" data-act="back" aria-label="Назад">${ic('back')}</button><div><h2>${title}</h2>${sub ? `<div class="sub">${sub}</div>` : ''}</div><span></span></div>`;
 
 function tipData() {
@@ -651,9 +696,8 @@ function homeScreen() {
   const t = tipData(), up = ch >= 0;
   return `<div class="stagger">
   <div class="hero">
-    <div class="between greet"><div><span class="muted">${n.getHours() < 5 ? 'Доброй ночи' : n.getHours() < 12 ? 'Доброе утро' : n.getHours() < 18 ? 'Добрый день' : 'Добрый вечер'}</span>${S.mine ? '' : '<span class="demo">демо</span>'}<b>${DAYS[n.getDay()]}, ${dm(n)}</b></div>
-      <div class="row" style="gap:8px"><button class="iconbtn" data-act="toast" data-msg="Календарь платежей появится в следующей версии прототипа" aria-label="Календарь">${ic('cal')}</button>
-      <button class="iconbtn" data-act="toast" data-msg="Напоминания приходят от бота в Telegram" aria-label="Уведомления">${ic('bell')}<span class="dot"></span></button>
+    <div class="between greet"><div class="row" style="gap:12px;min-width:0">${menuBtn()}<div><span class="muted">${n.getHours() < 5 ? 'Доброй ночи' : n.getHours() < 12 ? 'Доброе утро' : n.getHours() < 18 ? 'Добрый день' : 'Добрый вечер'}</span>${S.mine ? '' : '<span class="demo">демо</span>'}<b>${DAYS[n.getDay()]}, ${dm(n)}</b></div></div>
+      <div class="row" style="gap:8px">      <button class="iconbtn" data-act="toast" data-msg="Напоминания приходят от бота в Telegram" aria-label="Уведомления">${ic('bell')}<span class="dot"></span></button>
       <button class="iconbtn" data-act="push" data-to="profile" aria-label="Профиль" style="background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent);font-weight:800">${esc((tgName() || 'R')[0].toUpperCase())}</button></div></div>
     <div class="between" style="margin-top:18px"><button class="row muted" data-act="hide" style="gap:8px" aria-label="${S.hide ? 'Показать суммы' : 'Скрыть суммы'}">Общий баланс ${ic(S.hide ? 'eyeoff' : 'eye')}</button><button class="chipbtn" data-act="cur" aria-label="Сменить валюту">${S.cur} ${ic('chev')}</button></div>
     <div class="balance"><span class="money" id="bal" data-v="${shown}">${num(shown, S.cur, { round: true })}</span><small>${SIGN[S.cur]}</small></div>
@@ -694,7 +738,7 @@ function opsScreen() {
   const list = sortedOps().filter((o) => kindOk(o) && textOk(o));
   const LIMIT = 80, groups = [];
   for (const o of list.slice(0, LIMIT)) { const k = sod(o.date).getTime(); let g = groups[groups.length - 1]; if (!g || g.k !== k) groups.push((g = { k, d: o.date, items: [] })); g.items.push(o); }
-  return `<h1 class="h-title">Операции</h1>
+  return `<div class="titlebar">${menuBtn()}<h1 class="h-title">Операции</h1></div>
   <label class="search">${ic('search')}<input id="q" type="search" placeholder="Место, категория, счёт или сумма" value="${esc(S.q)}" autocomplete="off" aria-label="Поиск операций"></label>
   <div class="chips">${[['all', 'Все'], ['expense', 'Расходы'], ['income', 'Доходы'], ['transfer', 'Переводы и долги']].map(([k, l]) => `<button class="${S.chips === k ? 'on' : ''}" data-act="chip" data-k="${k}">${l}</button>`).join('')}</div>
   <div class="oplist">${groups.length ? groups.map((g) => { const tot = g.items.reduce((s, o) => s + (o.kind === 'expense' ? -opUZS(o) : o.kind === 'income' ? opUZS(o) : 0), 0);
@@ -712,7 +756,7 @@ function analyticsScreen() {
   const catsCur = Object.entries(cur.byCat).sort((a, b) => b[1] - a[1]).slice(0, 6), maxCat = Math.max(...catsCur.map(([, v]) => v), 1);
   const tot = bars.reduce((s, b) => ({ inc: s.inc + b.inc, exp: s.exp + b.exp }), { inc: 0, exp: 0 });
   const span = months === 1 ? `за ${passed} дн.` : `за ${months} мес.`;
-  return `<h1 class="h-title">Аналитика</h1>
+  return `<div class="titlebar">${menuBtn()}<h1 class="h-title">Аналитика</h1></div>
   <div class="seg">${['Месяц', '3 месяца', 'Полгода'].map((p) => `<button class="${p === per ? 'on' : ''}" data-act="aper" data-p="${p}">${p}</button>`).join('')}</div>
   <div class="qa stagger">
     <div class="card"><span class="small muted">Заработал</span><b class="money">${short(tot.inc)}</b><span class="tiny muted">${span}</span></div>
@@ -731,7 +775,7 @@ function analyticsScreen() {
 
 function accountsScreen() {
   const lent = debtSumUZS('lent'), owe = debtSumUZS('borrowed'), car = mainGoal();
-  return `<div class="between"><h1 class="h-title">Счета</h1><button class="iconbtn" style="background:var(--accent);color:var(--on-accent)" data-act="toast" data-msg="Добавление счёта появится в следующей версии прототипа" aria-label="Новый счёт">${ic('plus')}</button></div>
+  return `<div class="between titlebar"><div class="row">${menuBtn()}<h1 class="h-title">Счета</h1></div><button class="iconbtn" style="background:var(--accent);color:var(--on-accent)" data-act="toast" data-msg="Добавление счёта появится в следующей версии прототипа" aria-label="Новый счёт">${ic('plus')}</button></div>
   <div class="muted small">Всего на счетах</div><div style="font-size:28px;font-weight:800;margin:2px 0 14px" class="money">${fmt(totalUZS(), 'UZS', { round: true })}</div>
   <div class="stagger">${S.accounts.map((a) => `<button class="accard" style="--cc:var(${a.cc})" data-act="filteracc" data-id="${a.id}" aria-label="Операции по счёту ${a.name}"><div class="between"><b style="font-size:15px">${a.name}</b><span>${a.num ? '·· ' + a.num : a.id === 'cash' ? 'кошелёк' : 'карта'}</span></div>
     <div class="between"><b class="money">${fmt(bal(a), a.cur)}</b>${a.cur !== 'UZS' ? `<span class="money">≈ ${fmt(conv(bal(a), a.cur, 'UZS'), 'UZS', { round: true })}</span>` : ''}</div>
@@ -886,8 +930,22 @@ function amountHTML(input, cur) {
 }
 const keypad = () => `<div class="quickadd">${['000', '+10 000', '+100 000'].map((k) => `<button data-act="key" data-k="${k}">${k}</button>`).join('')}</div>
   <div class="keys">${['1', '2', '3', '4', '5', '6', '7', '8', '9', ',', '0', '⌫'].map((k) => `<button data-act="key" data-k="${k}" aria-label="${k === '⌫' ? 'Стереть' : k}">${k === '⌫' ? ic('bksp') : k}</button>`).join('')}</div>`;
+function sideHTML() {
+  const nb = badges(), here = S.stack.length ? view().s : S.tab, me = S.mine ? tgName() || 'Мой профиль' : 'Демо-профиль';
+  const cnt = (n) => (n === 'dot' ? '<span class="sdot"></span>' : n ? `<span class="rbadge">${n > 9 ? '9+' : n}</span>` : '<span></span>');
+  const item = (to, label, icon, tail = '<span></span>') => `<button class="sitem ${here === to ? 'on' : ''}" data-act="sidego" data-to="${to}"${here === to ? ' aria-current="page"' : ''}><span class="sic">${ic(icon)}</span><span>${label}</span>${tail}</button>`;
+  return `<div class="scrim" data-act="close"></div><nav class="side" role="dialog" aria-modal="true" aria-label="Меню">
+    <div class="shead"><span class="slogo">${ic('wallet')}</span><span><b>Who Wallet</b><span class="tiny">${S.mine ? 'мои данные' : 'демо-данные'}</span></span><button class="iconbtn sclose" data-act="close" aria-label="Закрыть меню">${ic('close')}</button></div>
+    <div class="slabel">Разделы</div>
+    ${item('home', 'Главная', 'home')}${item('ops', 'Операции', 'list', cnt(nb.ops))}${item('analytics', 'Аналитика', 'chart', cnt(nb.analytics))}${item('accounts', 'Счета', 'wallet')}
+    <div class="slabel">Деньги</div>
+    ${item('debts', 'Долги', 'people', cnt(nb.accounts))}${item('goal', 'Цели и резерв', 'target')}${item('ai', 'AI-помощник', 'spark')}${item('cal', 'Календарь', 'cal', '<span class="stag">скоро</span>')}
+    <div class="sfoot"><button class="sme" data-act="sidego" data-to="profile"><span class="av">${esc((tgName() || 'R')[0].toUpperCase())}</span><span style="min-width:0"><b>${esc(me)}</b><span class="tiny">Профиль и настройки</span></span>${ic('right')}</button></div>
+  </nav>`;
+}
 function sheetHTML() {
   const o = S.overlay; if (!o) return '';
+  if (o.type === 'side') return sideHTML();
   let body = '';
   if (o.type === 'add') {
     const m = o.mode, A = accOf(o.acc), B = accOf(o.to), v = amountVal(o.input);
@@ -1063,11 +1121,11 @@ function renderScreen(opts) {
   if (b) { const to = Number(b.dataset.v), from = S.lastTotal == null ? to * 0.94 : S.lastTotal; countUp(b, from, to); S.lastTotal = to; }
 }
 function renderOverlay() {
-  const host = document.getElementById('overlay'), prev = host.querySelector('.sheet'), st = prev ? prev.scrollTop : 0;
+  const host = document.getElementById('overlay'), prev = host.querySelector('.sheet, .side'), st = prev ? prev.scrollTop : 0;
   const type = S.overlay ? S.overlay.type : null, keep = !!type && type === lastOverlayType;
   host.innerHTML = sheetHTML();
   if (type && lastOverlayType) host.querySelector('.scrim').classList.add('still');
-  if (keep) { const s = host.querySelector('.sheet'); s.classList.add('still'); s.scrollTop = st; }
+  if (keep) { const s = host.querySelector('.sheet, .side'); if (s) { s.classList.add('still'); s.scrollTop = st; } }
   lastOverlayType = type;
 }
 let countRaf = 0;
@@ -1078,6 +1136,14 @@ function countUp(el, from, to) {
   const t0 = performance.now(), dur = 650;
   const step = (t) => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); if (!el.isConnected) return; out(from + (to - from) * e); if (k < 1) countRaf = requestAnimationFrame(step); };
   countRaf = requestAnimationFrame(step);
+}
+/** закрыть боковую панель с короткой анимацией ухода влево */
+function closeSide() {
+  const host = document.getElementById('overlay'), side = host.querySelector('.side');
+  const done = () => { if (S.overlay && S.overlay.type === 'side') { S.overlay = null; render({ overlayOnly: true }); } };
+  if (!side || document.documentElement.classList.contains('no-anim') || matchMedia('(prefers-reduced-motion: reduce)').matches) return done();
+  side.classList.add('out'); host.querySelector('.scrim').classList.add('out');
+  setTimeout(done, 170);
 }
 function toast(html, undo) {
   const host = document.getElementById('toastHost');
@@ -1167,7 +1233,14 @@ const handlers = {
   pickacc: (d) => { S.overlay = { type: 'pickacc', k: d.k, parent: S.overlay }; render({ overlayOnly: true }); },
   setacc: (d) => { const p = S.overlay.parent; p[S.overlay.k] = d.id; S.overlay = p; haptic(); render({ overlayOnly: true }); },
   save: () => saveAdd(),
-  close: () => { S.overlay = S.overlay && S.overlay.type === 'pickacc' ? S.overlay.parent : null; render({ overlayOnly: true }); },
+  close: () => { if (S.overlay && S.overlay.type === 'side') { closeSide(); return; } S.overlay = S.overlay && S.overlay.type === 'pickacc' ? S.overlay.parent : null; render({ overlayOnly: true }); },
+  side: () => { S.overlay = { type: 'side' }; haptic(); render({ overlayOnly: true }); },
+  sidego: (d) => {
+    haptic();
+    if (d.to === 'cal') { closeSide(); toast('<b>Календарь платежей появится в следующей версии прототипа</b>'); return; }
+    if (TABS.some((t) => t && t[0] === d.to)) { S.tab = d.to; S.stack = []; } else S.stack = [{ s: d.to }];
+    render({ top: true }); closeSide(); // экран меняется под панелью, панель уезжает
+  },
   del: (d) => { S.overlay = { type: 'confirm', id: +d.id }; render({ overlayOnly: true }); },
   delok: (d) => { const i = S.ops.findIndex((o) => o.id === +d.id), [x] = S.ops.splice(i, 1); S.overlay = null; S.stack.pop(); haptic(); render({ back: true }); toast(`<b>Операция удалена</b><span class="tiny muted">${esc(x.title)} · балансы пересчитаны</span>`, { type: 'restore', op: x }); },
   undo: () => {
@@ -1289,6 +1362,9 @@ device.addEventListener('input', (e) => {
   S.q = e.target.value; const pos = e.target.selectionStart; render({ anim: false });
   const q = document.getElementById('q'); q.focus(); try { q.setSelectionRange(pos, pos); } catch (err) { /* type=search */ }
 });
+let swipeX = null;
+device.addEventListener('touchstart', (e) => { swipeX = S.overlay && S.overlay.type === 'side' ? e.touches[0].clientX : null; }, { passive: true });
+device.addEventListener('touchend', (e) => { if (swipeX != null && swipeX - e.changedTouches[0].clientX > 60) handlers.close(); swipeX = null; }, { passive: true });
 document.addEventListener('keydown', (e) => {
   if (!S.overlay) return;
   if (e.key === 'Escape') { handlers.close(); return; }
@@ -1303,6 +1379,7 @@ const keys = (str) => str.split('').map((k) => () => typeKey(k));
 const openDebt = (id) => [() => handlers.push({ to: 'debts' }), () => handlers.push({ to: 'debt', id: String(id) })];
 const SHOT = {
   'shot-home': [],
+  'shot-side': [() => handlers.side()],
   'shot-zero': [() => { S = zeroState(); render({ anim: false }); }],
   'shot-zero-profile': [() => { S = zeroState(); S.stack = [{ s: 'profile' }]; render({ anim: false }); }],
   'shot-newdebt': [() => { S = zeroState(); handlers.push({ to: 'debts' }); handlers.newdebt(); S.overlay.person = 'Алишер'; }, ...keys('300000')],
