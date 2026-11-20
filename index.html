@@ -34,6 +34,7 @@
   --c1: #3B6FD8; --c2: #0B7F6B; --c3: #D49A1F; --c4: #8E5BD6; --c5: #B3C0BC; --c6: #D45C8A;
   --card1: #0B7F6B; --card2: #2F5FC8; --card3: #6A47B8; --card4: #8A6420; --on-card: #FFFFFF;
   --dock: rgba(255,255,255,.74); --dock-line: rgba(15,27,29,.09); --dock-ink: #0F1B1D; --dock-on: #0B7F6B; --dock-on-ink: #FFFFFF; --dock-hi: rgba(11,127,107,.13); --dock-more: rgba(15,27,29,.07);
+  --lg-tint: rgba(246,249,248,.66);
   --badge: #C9443A; --on-badge: #FFFFFF; --scrim: rgba(15,27,29,.45); --page: #E2EAE8; --frame: #C9D5D2; --shadow: 0 30px 80px -30px rgba(15,27,29,.35);
   --font: "Manrope", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -43,6 +44,7 @@
   --c1: #6F9BFF; --c2: #2BD4AE; --c3: #F4B84A; --c4: #B98AF5; --c5: #5D726C; --c6: #F08BC2;
   --card1: #1E5A4C; --card2: #2B3F7A; --card3: #3A2E5C; --card4: #4A3F28; --on-card: #F4FAF8;
   --dock: rgba(30,41,45,.66); --dock-line: rgba(255,255,255,.1); --dock-ink: #EDF4F2; --dock-on: #FFFFFF; --dock-on-ink: #0B1316; --dock-hi: rgba(255,255,255,.13); --dock-more: rgba(255,255,255,.15);
+  --lg-tint: rgba(18,28,32,.52);
   --badge: #FF715F; --on-badge: #2A0805; --scrim: rgba(3,8,10,.66); --page: #060C0E; --frame: #1C2629; --shadow: 0 30px 80px -30px rgba(0,0,0,.8); color-scheme: dark; } }
 :root[data-theme="dark"] {
   --bg: #0B1316; --surface: #121D21; --surface2: #18262B; --line: #24343A; --text: #EDF4F2; --muted: #A6B8B3; --faint: #6F837D;
@@ -50,6 +52,7 @@
   --c1: #6F9BFF; --c2: #2BD4AE; --c3: #F4B84A; --c4: #B98AF5; --c5: #5D726C; --c6: #F08BC2;
   --card1: #1E5A4C; --card2: #2B3F7A; --card3: #3A2E5C; --card4: #4A3F28; --on-card: #F4FAF8;
   --dock: rgba(30,41,45,.66); --dock-line: rgba(255,255,255,.1); --dock-ink: #EDF4F2; --dock-on: #FFFFFF; --dock-on-ink: #0B1316; --dock-hi: rgba(255,255,255,.13); --dock-more: rgba(255,255,255,.15);
+  --lg-tint: rgba(18,28,32,.52);
   --badge: #FF715F; --on-badge: #2A0805; --scrim: rgba(3,8,10,.66); --page: #060C0E; --frame: #1C2629; --shadow: 0 30px 80px -30px rgba(0,0,0,.8); color-scheme: dark; }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -182,6 +185,16 @@ svg.fi { width: 24px; height: 24px; flex: none; display: block; }
 .dmic svg.fi { width: 26px; height: 26px; }
 .dmi[data-to="add"] { color: var(--accent); font-weight: 800; }
 .device[data-tb="expandable"] .toast { bottom: 102px; }
+/* ---- Liquid Glass: док преломляет экран под собой (вместо размытия) ---- */
+#device > .lqg-lens { position: absolute; }
+.lqg-lens *, .lqg-lens { animation: none !important; transition: none !important; }
+.lqg-glass { display: none !important; }
+.tabbar.lg-on { background: var(--lg-tint); -webkit-backdrop-filter: none; backdrop-filter: none; border-color: rgba(255,255,255,.3);
+  box-shadow: 0 18px 40px -16px rgba(0,0,0,.45), 0 0 0 .5px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.5), inset 0 -1px 0 rgba(255,255,255,.12); }
+.lgsw { width: 42px; height: 26px; border-radius: 13px; background: var(--line); position: relative; transition: background .25s; }
+.lgsw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3); transition: transform .3s cubic-bezier(.3,1.3,.5,1); }
+.lgsw.on { background: var(--accent); }
+.lgsw.on::after { transform: translateX(16px); }
 /* ---- открытие кошелька (вкладка «Счета»): только transform и opacity — плавно и на телефоне ---- */
 .wo { position: absolute; inset: 0; z-index: 4; pointer-events: none; perspective: 1200px; overflow: hidden; }
 .wo-bd { position: absolute; inset: 0; background: var(--bg); opacity: 0; }
@@ -515,6 +528,7 @@ html.no-anim .device { width: 390px; height: 844px; min-height: 0; border-radius
       <li>Аналитика → «Спросить» → AI-помощник отвечает по этим же данным.</li>
       <li><b>Бейджи на нижнем меню:</b> «Операции» — сколько новых записей (в списке они отмечены точкой), «Счета» — долги с просрочкой или сроком в ближайшие 3 дня, точка на «Аналитике» — лимит категории исчерпан. Бейдж гаснет, когда раздел открыт. Добавьте расход на главной — счётчик на «Операциях» подпрыгнет.</li>
       <li><b>Боковое меню:</b> кнопка ☰ слева вверху → плавающая панель со всеми разделами, бейджами и профилем. Закрывается крестиком, тапом мимо панели или свайпом влево.</li>
+      <li><b>Liquid Glass:</b> док внизу — не размытие, а настоящая линза: край преломляет и чуть увеличивает экран под ним, по кромке радужный отлив и блик. Прокрутите главную — содержимое «перетекает» через стекло. Выключается в Профиле.</li>
       <li><b>Открытие кошелька:</b> нажмите «Счета» — иконка вырастает в кошелёк, клапан откидывается, главная карта выезжает изнутри, баланс пересчитывается, карты и операции появляются по очереди. Уходите на другую вкладку — кошелёк закрывается в обратном порядке.</li>
       <li><b>Новое — Expandable (Finance App Navigation):</b> стеклянный док с иконками и кнопкой «⋯» справа. Нажмите её — над доком раскроется меню: новая операция, долги, цели, AI-помощник, настройки.</li>
       <li><b>9 стилей нижнего меню:</b> ☰ → «Нижнее меню» (или Профиль → «Нижнее меню»): Sliding bar, Expanding, Center button, Floating, Hide on scroll, Badges, Notch, Dot, Expandable. Меню меняется сразу, выбор запоминается. Иконка вкладки при переходе прорисовывается и подпрыгивает.</li>
@@ -524,6 +538,520 @@ html.no-anim .device { width: 390px; height: 844px; min-height: 0; border-radius
   </aside>
 </div>
 
+<script>
+/* liquid-glass-js 0.1.0 (npm), https://github.com/eamonliu/liquid-glass-js
+   Встроен без изменений, сняты только ES-модульные export; класс доступен как window.LiquidGlass.
+
+   MIT License
+
+   Copyright (c) 2026 Eamon Liu
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in all
+   copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+*/
+(function () {
+'use strict';
+/*!
+ * liquid-glass-js — Cross-browser liquid-glass refraction (Chrome / Safari / Firefox)
+ *
+ * Built on the SVG feDisplacementMap primitive: a displacement map is generated on the
+ * fly from a "height field" optical model, bending the real background pixels — convex
+ * surfaces magnify, concave shrink — with chromatic aberration and a normal-based
+ * specular highlight.
+ *
+ * Refraction source = clone mode: the background element you point it at is cloned and
+ * refracted, which keeps it working across Chrome, Safari and Firefox.
+ *
+ * --- Usage A: JavaScript class ---
+ *   import LiquidGlass from 'liquid-glass-js';
+ *   const glass = new LiquidGlass({
+ *     background: document.querySelector('#scene'), // element to refract (it gets cloned)
+ *     width: 360, height: 220, radius: 48,
+ *     scale: 46, chroma: 0.1, tint: 0,              // see DEFAULTS for the full list
+ *   });
+ *   glass.set({ scale: 60 }); // update params
+ *   glass.moveTo(x, y);       // move (screen position of the glass top-left)
+ *   glass.refresh();          // re-clone after the background changes
+ *   glass.destroy();          // tear down
+ *
+ * --- Usage B: Web Component ---
+ *   import 'liquid-glass-js';  // registers <liquid-glass>
+ *   <liquid-glass background="#scene" width="360" height="220"
+ *                  scale="46" chroma="0.1" tint="0"></liquid-glass>
+ *
+ * @license MIT
+ */
+
+const SVGNS = 'http://www.w3.org/2000/svg';
+const XLINK = 'http://www.w3.org/1999/xlink';
+const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
+
+/* Signed distance field of a rounded rectangle: negative inside, 0 on the edge, positive outside. */
+function roundedRectSDF(px, py, hw, hh, r) {
+  const qx = Math.abs(px) - hw + r;
+  const qy = Math.abs(py) - hh + r;
+  return Math.min(Math.max(qx, qy), 0) + Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) - r;
+}
+
+/** Default parameters (based on a "strong refraction" look, with tint 0 and a light chroma). */
+const DEFAULTS = {
+  width: 360, height: 220, radius: 48,
+  scale: 46, depth: 40, curvature: 2.2, convexity: 1.0, chroma: 0.1,
+  blur: 0, glow: 0.18, edge: 0.7, specAngle: 135,
+  tint: 0, tintColor: '#ffffff',
+};
+
+/* Params that only touch CSS variables (no map rebuild). Everything else rebuilds the maps. */
+const LIVE = new Set(['blur', 'glow', 'tint', 'tintColor']);
+
+let _uid = 0;
+let _styleEl = null;
+
+/* Inject the shared component stylesheet once. */
+function injectStyle() {
+  if (_styleEl || typeof document === 'undefined') return;
+  _styleEl = document.createElement('style');
+  _styleEl.id = 'liquid-glass-style';
+  _styleEl.textContent =
+    `.lqg-lens{position:fixed;top:0;left:0;overflow:hidden;pointer-events:none;}` +
+    `.lqg-lens-inner{position:absolute;top:0;left:0;}` +
+    `.lqg-glass{position:fixed;top:0;left:0;box-sizing:border-box;` +
+      `-webkit-backdrop-filter:blur(var(--lqg-blur,0px));backdrop-filter:blur(var(--lqg-blur,0px));` +
+      `background:color-mix(in srgb, var(--lqg-tint-color,#fff) calc(var(--lqg-tint,0) * 100%), transparent);` +
+      `box-shadow:0 10px 40px rgba(0,0,0,.35),0 2px 8px rgba(0,0,0,.25),` +
+        `inset 0 1px 1px rgba(255,255,255,.25),inset 0 0 0 1px rgba(255,255,255,.06),` +
+        `0 0 calc(var(--lqg-glow,0) * 60px) rgba(255,255,255, calc(var(--lqg-glow,0) * .55));` +
+      `touch-action:none;will-change:transform;}` +
+    `.lqg-glass.lqg-draggable{pointer-events:auto;cursor:grab;}` +
+    `.lqg-glass.lqg-draggable:active{cursor:grabbing;}`;
+  (document.head || document.documentElement).appendChild(_styleEl);
+}
+
+/**
+ * LiquidGlass — programmatic API.
+ * @param {object} [opts] DEFAULTS + { background, zIndex, draggable, x, y }
+ */
+class LiquidGlass {
+  constructor(opts = {}) {
+    injectStyle();
+    this.uid = 'lqg' + (++_uid);
+    this.background = opts.background || null;
+    this.zIndex = opts.zIndex != null ? opts.zIndex : 100;
+    this.draggable = opts.draggable !== false;
+
+    this.params = Object.assign({}, DEFAULTS);
+    for (const k in DEFAULTS) if (opts[k] != null) this.params[k] = opts[k];
+
+    this.margin = 60;
+    this.lensX = 0; this.lensY = 0;
+    this.bgX = 0; this.bgY = 0;
+    this._seq = 0; this._dragMode = false; this._raf = 0; this._syncRaf = 0;
+
+    this.canvas = document.createElement('canvas');
+    this.ctx = this.canvas.getContext('2d', { willReadFrequently: true });
+    this.specCanvas = document.createElement('canvas');
+    this.specCtx = this.specCanvas.getContext('2d', { willReadFrequently: true });
+
+    this._build();
+    this._bindEvents();
+
+    const x = opts.x != null ? opts.x : (window.innerWidth - this.params.width) / 2;
+    const y = opts.y != null ? opts.y : (window.innerHeight - this.params.height) / 2;
+    this.lensX = x; this.lensY = y;
+    this.refresh();
+  }
+
+  /* ---------- Build DOM and the per-instance SVG filters (unique ids) ---------- */
+  _build() {
+    const u = this.uid;
+    const cm = (ch) => { // feColorMatrix that keeps a single colour channel
+      const m = ['0 0 0 0 0', '0 0 0 0 0', '0 0 0 0 0', '0 0 0 1 0'];
+      m[ch] = ch === 0 ? '1 0 0 0 0' : ch === 1 ? '0 1 0 0 0' : '0 0 1 0 0';
+      return m.join('  ');
+    };
+    const svg = document.createElementNS(SVGNS, 'svg');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
+    svg.innerHTML =
+      `<defs>` +
+      `<filter id="${u}-full" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">` +
+        `<feFlood flood-color="rgb(128,128,128)" result="neutral"/>` +
+        `<feImage id="${u}-map" x="0" y="0" preserveAspectRatio="none" result="raw"/>` +
+        `<feComposite in="raw" in2="neutral" operator="over" result="map"/>` +
+        `<feDisplacementMap id="${u}-dr" in="SourceGraphic" in2="map" xChannelSelector="R" yChannelSelector="G" result="dr"/>` +
+        `<feColorMatrix in="dr" type="matrix" values="${cm(0)}" result="cr"/>` +
+        `<feDisplacementMap id="${u}-dg" in="SourceGraphic" in2="map" xChannelSelector="R" yChannelSelector="G" result="dg"/>` +
+        `<feColorMatrix in="dg" type="matrix" values="${cm(1)}" result="cg"/>` +
+        `<feDisplacementMap id="${u}-db" in="SourceGraphic" in2="map" xChannelSelector="R" yChannelSelector="G" result="db"/>` +
+        `<feColorMatrix in="db" type="matrix" values="${cm(2)}" result="cb"/>` +
+        `<feBlend in="cr" in2="cg" mode="screen" result="rg"/>` +
+        `<feBlend in="rg" in2="cb" mode="screen" result="rgb"/>` +
+        `<feImage id="${u}-spec" x="0" y="0" preserveAspectRatio="none" result="spec"/>` +
+        `<feBlend in="spec" in2="rgb" mode="screen"/>` +
+      `</filter>` +
+      `<filter id="${u}-drag" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">` +
+        `<feFlood flood-color="rgb(128,128,128)" result="neutral"/>` +
+        `<feImage id="${u}-map-d" x="0" y="0" preserveAspectRatio="none" result="raw"/>` +
+        `<feComposite in="raw" in2="neutral" operator="over" result="map"/>` +
+        `<feDisplacementMap id="${u}-dd" in="SourceGraphic" in2="map" xChannelSelector="R" yChannelSelector="G" result="rgb"/>` +
+        `<feImage id="${u}-spec-d" x="0" y="0" preserveAspectRatio="none" result="spec"/>` +
+        `<feBlend in="spec" in2="rgb" mode="screen"/>` +
+      `</filter>` +
+      `</defs>`;
+    document.body.appendChild(svg);
+    this.svg = svg;
+    const q = (id) => svg.querySelector('#' + CSS.escape(id));
+    this.filterFull = q(u + '-full');
+    this.filterDrag = q(u + '-drag');
+    this.feImage = q(u + '-map');
+    this.feImageDrag = q(u + '-map-d');
+    this.feSpec = q(u + '-spec');
+    this.feSpecDrag = q(u + '-spec-d');
+    this.dispR = q(u + '-dr');
+    this.dispG = q(u + '-dg');
+    this.dispB = q(u + '-db');
+    this.dispDrag = q(u + '-dd');
+
+    this.lensEl = document.createElement('div');
+    this.lensEl.className = 'lqg-lens';
+    this.lensEl.style.zIndex = this.zIndex;
+    this.lensInner = document.createElement('div');
+    this.lensInner.className = 'lqg-lens-inner';
+    this.lensEl.appendChild(this.lensInner);
+
+    this.glassEl = document.createElement('div');
+    this.glassEl.className = 'lqg-glass' + (this.draggable ? ' lqg-draggable' : '');
+    this.glassEl.style.zIndex = this.zIndex + 1;
+
+    document.body.appendChild(this.lensEl);
+    document.body.appendChild(this.glassEl);
+    this._applyVars();
+  }
+
+  /* ---------- Background clone + alignment ---------- */
+  _cloneBackground() {
+    this.lensInner.innerHTML = '';
+    const bg = this.background;
+    if (!bg) return;
+    // Keep ids: the background's styling may rely on id selectors (e.g. #bg / #bg h1).
+    // The clone is an aria-hidden static snapshot; duplicate ids only affect CSS matching,
+    // not the page's own getElementById/querySelector (the original comes first in the DOM).
+    const clone = bg.cloneNode(true);
+    clone.style.position = 'absolute';
+    clone.style.inset = '0';
+    clone.style.margin = '0';
+    clone.setAttribute('aria-hidden', 'true');
+    this.lensInner.appendChild(clone);
+  }
+
+  _syncBg() {
+    if (this.background) {
+      const r = this.background.getBoundingClientRect();
+      this.bgX = r.left; this.bgY = r.top;
+      this.lensInner.style.width = r.width + 'px';
+      this.lensInner.style.height = r.height + 'px';
+    } else {
+      this.bgX = 0; this.bgY = 0;
+      this.lensInner.style.width = window.innerWidth + 'px';
+      this.lensInner.style.height = window.innerHeight + 'px';
+    }
+  }
+
+  /** Re-clone the background, rebuild the maps and re-align. Call after the background changes. */
+  refresh() {
+    this._cloneBackground();
+    this._syncBg();
+    this.generateMap(); // also calls placeLens + commit
+    return this;
+  }
+
+  /* ---------- Displacement + specular maps (height-field optical model) ---------- */
+  generateMap() {
+    const p = this.params;
+    const W = p.width, H = p.height;
+    const M = Math.max(16, Math.ceil(p.scale * (1 + clamp(p.chroma, 0, 0.95))) + 12);
+    this.margin = M;
+    const OW = W + 2 * M, OH = H + 2 * M;
+    const hw = W / 2, hh = H / 2;
+    const rr = Math.min(p.radius, hw, hh);
+
+    // Thickness profile: linear blend between convex (squircle) and concave. Displacement is
+    // proportional to the slope and points inward, so a convex surface magnifies.
+    const bezel = Math.max(1, p.depth);
+    const k = Math.max(1.2, p.curvature);
+    const blend = (clamp(p.convexity, -1, 1) + 1) / 2;
+    const profile = (t) => {
+      t = clamp(t, 0, 1);
+      const q = 1 - t;
+      const convex = Math.pow(1 - Math.pow(q, k), 1 / k);
+      return (1 - convex) + (convex - (1 - convex)) * blend;
+    };
+    const dpp = 0.5 / bezel;
+
+    const res = Math.min(1, 360 / Math.max(OW, OH));
+    const mw = Math.max(2, Math.round(OW * res));
+    const mh = Math.max(2, Math.round(OH * res));
+    const cv = this.canvas; cv.width = mw; cv.height = mh;
+    const img = this.ctx.createImageData(mw, mh);
+    const data = img.data;
+    const N = mw * mh;
+    const rx = new Float32Array(N), ry = new Float32Array(N), sp = new Float32Array(N);
+    let maxAbs = 1e-6, maxSpec = 1e-6;
+    const la = p.specAngle * Math.PI / 180;
+    const Lx = Math.cos(la), Ly = -Math.sin(la);
+    const SHININESS = 4;
+    const e = Math.max(0.75, 0.75 / res);
+    const sdf = (x, y) => roundedRectSDF(x, y, hw, hh, rr);
+
+    let idx = 0;
+    for (let y = 0; y < mh; y++) {
+      for (let x = 0; x < mw; x++, idx++) {
+        const px = (x + 0.5) / mw * OW - OW / 2;
+        const py = (y + 0.5) / mh * OH - OH / 2;
+        const d = sdf(px, py);
+        const din = -d; // depth inside the lens (>= 0 inside)
+        let mag = 0;
+        if (din >= 0 && din <= bezel) {
+          const t = din / bezel;
+          mag = (profile(t + dpp) - profile(t - dpp)) / (2 * dpp); // signed slope
+        }
+        let gx = sdf(px + e, py) - sdf(px - e, py);
+        let gy = sdf(px, py + e) - sdf(px, py - e);
+        const gl = Math.hypot(gx, gy) || 1; gx /= gl; gy /= gl;
+
+        // Specular: brighter where the surface is steep and its normal faces the light.
+        const align = gx * Lx + gy * Ly;
+        const sv = Math.abs(mag) * (Math.pow(Math.max(0, align), SHININESS) + 0.3 * Math.pow(Math.max(0, -align), SHININESS));
+        sp[idx] = sv; if (sv > maxSpec) maxSpec = sv;
+
+        const dx = -gx * mag, dy = -gy * mag; // inward = magnify (convex), outward = shrink (concave)
+        rx[idx] = dx; ry[idx] = dy;
+        const m = Math.max(Math.abs(dx), Math.abs(dy));
+        if (m > maxAbs) maxAbs = m;
+      }
+    }
+
+    for (let i = 0; i < N; i++) {
+      data[i * 4]     = clamp(rx[i] / maxAbs * 0.5 + 0.5, 0, 1) * 255;
+      data[i * 4 + 1] = clamp(ry[i] / maxAbs * 0.5 + 0.5, 0, 1) * 255;
+      data[i * 4 + 2] = 128;
+      data[i * 4 + 3] = 255;
+    }
+    this.ctx.putImageData(img, 0, 0);
+    const url = cv.toDataURL();
+
+    // Specular image: white, alpha = strength * edge.
+    this.specCanvas.width = mw; this.specCanvas.height = mh;
+    const simg = this.specCtx.createImageData(mw, mh);
+    const sd = simg.data;
+    for (let i = 0; i < N; i++) {
+      const a = clamp(Math.pow(sp[i] / maxSpec, 0.9) * p.edge, 0, 1);
+      sd[i * 4] = 255; sd[i * 4 + 1] = 255; sd[i * 4 + 2] = 255; sd[i * 4 + 3] = a * 255;
+    }
+    this.specCtx.putImageData(simg, 0, 0);
+    const specUrl = this.specCanvas.toDataURL();
+
+    this.lensEl.style.width = OW + 'px';
+    this.lensEl.style.height = OH + 'px';
+    this.lensEl.style.clipPath = `inset(${M}px round ${rr}px)`; // show only the lens shape
+    this._setImg([this.feImage, this.feImageDrag], OW, OH, url);
+    this._setImg([this.feSpec, this.feSpecDrag], OW, OH, specUrl);
+
+    this.placeLens();
+    this.updateScales();
+    this.commit();
+  }
+
+  _setImg(list, w, h, href) {
+    for (const fe of list) {
+      fe.setAttribute('width', w);
+      fe.setAttribute('height', h);
+      fe.setAttribute('href', href);
+      fe.setAttributeNS(XLINK, 'href', href);
+    }
+  }
+
+  updateScales() {
+    const s = this.params.scale, c = clamp(this.params.chroma, 0, 0.95), base = 2 * s;
+    this.dispR.setAttribute('scale', (base * (1 + c)).toFixed(2));
+    this.dispG.setAttribute('scale', base.toFixed(2));
+    this.dispB.setAttribute('scale', (base * (1 - c)).toFixed(2));
+    this.dispDrag.setAttribute('scale', base.toFixed(2));
+  }
+
+  /* Safari caches filter output by id; bump the id after a map update to force a refresh. */
+  commit() {
+    this._seq++;
+    const el = this._dragMode ? this.filterDrag : this.filterFull;
+    const id = (this._dragMode ? this.uid + '-drag-' : this.uid + '-full-') + this._seq;
+    el.setAttribute('id', id);
+    this.lensEl.style.filter = 'url(#' + id + ')';
+  }
+
+  setDragMode(on) { this._dragMode = on; this.commit(); }
+
+  /* Position the lens window and align the cloned background to the real one. Integer-snapped
+     so the clone shares the pixel grid with the original (avoids text shimmer). */
+  placeLens() {
+    const M = this.margin;
+    const lx = Math.round(this.lensX) - M, ly = Math.round(this.lensY) - M;
+    this.lensEl.style.left = lx + 'px';
+    this.lensEl.style.top = ly + 'px';
+    this.lensInner.style.left = (this.bgX - lx) + 'px';
+    this.lensInner.style.top = (this.bgY - ly) + 'px';
+    const p = this.params;
+    const g = this.glassEl.style;
+    g.width = p.width + 'px';
+    g.height = p.height + 'px';
+    g.borderRadius = Math.min(p.radius, p.width / 2, p.height / 2) + 'px';
+    g.transform = `translate(${Math.round(this.lensX)}px, ${Math.round(this.lensY)}px)`;
+  }
+
+  _applyVars() {
+    const g = this.glassEl.style, p = this.params;
+    g.setProperty('--lqg-blur', p.blur + 'px');
+    g.setProperty('--lqg-glow', p.glow);
+    g.setProperty('--lqg-tint', p.tint);
+    g.setProperty('--lqg-tint-color', p.tintColor);
+  }
+
+  /* ---------- Public API ---------- */
+
+  /** Update one or more parameters. Rebuilds the maps only when needed. */
+  set(partial) {
+    let regen = false;
+    for (const key in partial) {
+      if (!(key in this.params)) continue;
+      this.params[key] = partial[key];
+      if (!LIVE.has(key)) regen = true;
+    }
+    this._applyVars();
+    if (regen) { cancelAnimationFrame(this._raf); this._raf = requestAnimationFrame(() => this.generateMap()); }
+    else { this.placeLens(); this.updateScales(); this.commit(); }
+    return this;
+  }
+
+  /** Get a single parameter, or a copy of all parameters. */
+  get(key) { return key ? this.params[key] : Object.assign({}, this.params); }
+
+  /** Move the glass. x/y are the screen coordinates of its top-left corner. */
+  moveTo(x, y) { this.lensX = x; this.lensY = y; this.placeLens(); return this; }
+
+  /** Swap the background element being refracted. */
+  setBackground(el) { this.background = el; this.refresh(); return this; }
+
+  /** Remove all DOM, filters and listeners created by this instance. */
+  destroy() {
+    cancelAnimationFrame(this._raf); cancelAnimationFrame(this._syncRaf);
+    window.removeEventListener('scroll', this._onSync, true);
+    window.removeEventListener('resize', this._onSync);
+    this.glassEl.remove(); this.lensEl.remove(); this.svg.remove();
+  }
+
+  /* ---------- Events ---------- */
+  _bindEvents() {
+    this._onSync = () => {
+      if (this._syncRaf) return;
+      this._syncRaf = requestAnimationFrame(() => { this._syncRaf = 0; this._syncBg(); this.placeLens(); });
+    };
+    window.addEventListener('scroll', this._onSync, true);
+    window.addEventListener('resize', this._onSync);
+
+    if (!this.draggable) return;
+    let dragging = false, ox = 0, oy = 0, px = 0, py = 0, raf = 0;
+    this.glassEl.addEventListener('pointerdown', (ev) => {
+      ev.preventDefault();
+      dragging = true; ox = ev.clientX - this.lensX; oy = ev.clientY - this.lensY;
+      this.glassEl.setPointerCapture(ev.pointerId);
+      this.setDragMode(true); // single-pass (no chroma) while dragging — lighter
+    });
+    this.glassEl.addEventListener('pointermove', (ev) => {
+      if (!dragging) return;
+      px = ev.clientX - ox; py = ev.clientY - oy;
+      if (!raf) raf = requestAnimationFrame(() => { raf = 0; this.moveTo(px, py); });
+    });
+    const up = () => {
+      if (!dragging) return;
+      dragging = false;
+      if (raf) { cancelAnimationFrame(raf); raf = 0; this.moveTo(px, py); }
+      this.setDragMode(false); // restore full chroma on release
+    };
+    this.glassEl.addEventListener('pointerup', up);
+    this.glassEl.addEventListener('pointercancel', up);
+  }
+}
+
+LiquidGlass.DEFAULTS = DEFAULTS;
+
+/* ============================================================
+   Web Component: <liquid-glass> — a thin declarative wrapper.
+   Defined only in a DOM environment (SSR-safe).
+============================================================ */
+const ATTRS = {
+  width: 'width', height: 'height', radius: 'radius', scale: 'scale',
+  depth: 'depth', curvature: 'curvature', convexity: 'convexity', chroma: 'chroma',
+  blur: 'blur', glow: 'glow', edge: 'edge', 'spec-angle': 'specAngle',
+  tint: 'tint', 'tint-color': 'tintColor',
+};
+
+let LiquidGlassElement = null;
+
+if (typeof HTMLElement !== 'undefined') {
+  LiquidGlassElement = class extends HTMLElement {
+    static get observedAttributes() {
+      return Object.keys(ATTRS).concat(['background', 'draggable', 'x', 'y', 'z-index']);
+    }
+    connectedCallback() {
+      if (this.glass) return;
+      this.style.display = 'none';
+      const at = (n) => this.getAttribute(n);
+      const num = (n) => { const v = at(n); return v == null ? undefined : parseFloat(v); };
+      const opts = {
+        background: at('background') ? document.querySelector(at('background')) : null,
+        draggable: at('draggable') !== 'false',
+        zIndex: at('z-index') != null ? parseInt(at('z-index'), 10) : undefined,
+        x: num('x'), y: num('y'),
+        tintColor: at('tint-color') || undefined,
+      };
+      for (const attr in ATTRS) if (attr !== 'tint-color') opts[ATTRS[attr]] = num(attr);
+      this.glass = new LiquidGlass(opts);
+    }
+    disconnectedCallback() { if (this.glass) { this.glass.destroy(); this.glass = null; } }
+    attributeChangedCallback(name, _old, val) {
+      if (!this.glass) return;
+      if (name === 'background') { this.glass.setBackground(val ? document.querySelector(val) : null); return; }
+      if (name === 'x' || name === 'y') {
+        const x = this.getAttribute('x'), y = this.getAttribute('y');
+        this.glass.moveTo(x != null ? parseFloat(x) : this.glass.lensX, y != null ? parseFloat(y) : this.glass.lensY);
+        return;
+      }
+      if (name in ATTRS) this.glass.set({ [ATTRS[name]]: name === 'tint-color' ? val : parseFloat(val) });
+    }
+  };
+  if (typeof customElements !== 'undefined' && !customElements.get('liquid-glass')) {
+    customElements.define('liquid-glass', LiquidGlassElement);
+  }
+}
+
+
+window.LiquidGlass = LiquidGlass;
+})();
+</script>
 <script>
 (() => {
 'use strict';
@@ -1059,7 +1587,8 @@ function profileScreen() {
   <div class="row" style="margin-bottom:18px"><span class="iconbtn" style="width:56px;height:56px;background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent);font-size:22px;font-weight:800">${esc((tgName() || 'R')[0].toUpperCase())}</span><div><b style="font-size:18px">${S.mine ? esc(tgName() || 'Мой профиль') : 'Демо-профиль'}</b><br><span class="small muted">${S.accounts.length} счёта · ${S.ops.length} операций${S.mine ? ' · свои данные' : ' · демо-данные'}</span></div></div>
   <div class="small muted" style="font-weight:700;margin-bottom:8px">Тема</div>
   <div class="seg"><button class="${th === 'auto' ? 'on' : ''}" data-act="theme" data-t="auto">Как в Telegram</button><button class="${th === 'light' ? 'on' : ''}" data-act="theme" data-t="light">Светлая</button><button class="${th === 'dark' ? 'on' : ''}" data-act="theme" data-t="dark">Тёмная</button></div>
-  <button class="listrow" style="margin-top:14px" data-act="tbopen"><span class="ri">${ic('layout')}</span><span><b>Нижнее меню</b><br><span class="tiny muted">${TB_STYLES.findIndex((x) => x[0] === TB) + 1} ${TB_STYLES.find((x) => x[0] === TB)[1]} · ${TB_STYLES.length} стилей</span></span><span></span>${ic('right')}</button>
+  <button class="listrow" style="margin-top:14px" data-act="lgtoggle" role="switch" aria-checked="${lgPref}"><span class="ri">${ic('spark')}</span><span><b>Жидкое стекло</b><br><span class="tiny muted">${lgPref ? 'док преломляет экран, как линза' : 'выключено: обычное размытие'}</span></span><span class="lgsw ${lgPref ? 'on' : ''}"></span><span></span></button>
+  <button class="listrow" data-act="tbopen"><span class="ri">${ic('layout')}</span><span><b>Нижнее меню</b><br><span class="tiny muted">${TB_STYLES.findIndex((x) => x[0] === TB) + 1} ${TB_STYLES.find((x) => x[0] === TB)[1]} · ${TB_STYLES.length} стилей</span></span><span></span>${ic('right')}</button>
   <div class="small muted" style="font-weight:700;margin:16px 0 8px">Язык</div>
   <div class="seg"><button class="on">Русский</button><button data-act="toast" data-msg="Узбекский язык появится в следующей версии прототипа">O‘zbekcha</button></div>
   <div style="margin-top:18px">${[['coin', 'Основная валюта', 'UZS'], ['bell', 'Ежедневный отчёт', '21:00'], ['lock', 'Вход в приложение', 'Face ID'], ['globe', 'О приложении', 'прототип']].map(([i, t, v]) => `<button class="listrow" data-act="toast" data-msg="«${t}» — в следующей версии прототипа"><span class="ri">${ic(i)}</span><b>${t}</b><span class="small muted">${v}</span>${ic('right')}</button>`).join('')}</div>
@@ -1282,6 +1811,7 @@ function applyTbStyle() {
   TB_STYLES.forEach(([k]) => bar.classList.toggle('tb-' + k, k === TB));
   bar.classList.remove('tb-hidden'); dev.dataset.tb = TB;
   dev.classList.toggle('flow', TB === 'floating' || TB === 'hide' || TB === 'expandable');
+  requestAnimationFrame(lgSync);
 }
 function moveInd(first) {
   const bar = document.getElementById('tabbar'), ind = bar.querySelector('.tb-ind'), on = bar.querySelector('.tab.on');
@@ -1310,7 +1840,56 @@ function updateTabbar() {
   if (S.stack.length) setDock(false);
   if (active) { moveInd(!lastActive); lastActive = active; }
 }
-function render(opts = {}) { if (!opts.overlayOnly) { if (woRun && !woRun.own) woKill(); renderScreen(opts); saveMine(); } renderOverlay(); }
+// ---- Liquid Glass (liquid-glass-js): док над экраном — настоящая линза ----
+// Библиотека преломляет копию экрана через SVG feDisplacementMap (работает и в Safari / Telegram на iPhone).
+// Включается для плавающих доков (Expandable, Floating); выключается в профиле.
+const LG_KEY = 'who-wallet-liquid-glass';
+let lgPref = (() => { try { return localStorage.getItem(LG_KEY) !== 'off'; } catch (e) { return true; } })();
+let lg = null, lgRaf = 0, lgTimer = 0, lgScrollT = 0;
+const lgWanted = () => lgPref && typeof window.LiquidGlass === 'function' && (TB === 'expandable' || TB === 'floating');
+function lgGeom() {
+  const bar = document.getElementById('tabbar'), b = bar.getBoundingClientRect(), d = document.getElementById('device').getBoundingClientRect();
+  return { x: Math.round(b.left - d.left), y: Math.round(b.top - d.top), w: Math.round(b.width), h: Math.round(b.height), r: parseFloat(getComputedStyle(bar).borderTopLeftRadius) || 24 };
+}
+/** обновить копию экрана под линзой (после перерисовки, прокрутки или анимаций) */
+function lgReclone() {
+  if (!lg) return;
+  const scr = document.getElementById('screen'), bar = document.getElementById('tabbar');
+  lg.lensEl.style.display = bar.hidden ? 'none' : '';
+  lg._cloneBackground();
+  const c = lg.lensInner.firstElementChild;
+  if (c) { c.removeAttribute('id'); c.querySelectorAll('[id]').forEach((e) => e.removeAttribute('id')); }
+  lg._syncBg(); if (c) c.scrollTop = scr.scrollTop;
+  lg.placeLens(); lg.commit();
+}
+function lgSoon() {
+  if (!lg) return;
+  cancelAnimationFrame(lgRaf); lgRaf = requestAnimationFrame(lgReclone);
+  clearTimeout(lgTimer); lgTimer = setTimeout(lgReclone, 1100); // ещё раз, когда отыграют анимации появления
+}
+/** создать, подогнать или убрать линзу под текущий стиль меню */
+function lgSync() {
+  const bar = document.getElementById('tabbar');
+  if (!lgWanted()) { if (lg) { lg.destroy(); lg = null; } bar.classList.remove('lg-on'); return; }
+  const g = lgGeom(); if (!g.w || bar.hidden) { if (lg) lg.lensEl.style.display = 'none'; return; }
+  if (!lg) {
+    lg = new window.LiquidGlass({ background: document.getElementById('screen'), draggable: false, zIndex: 5, x: g.x, y: g.y, width: g.w, height: g.h, radius: g.r,
+      scale: 24, depth: 18, curvature: 2.6, convexity: 1, chroma: 0.14, blur: 0, glow: 0, edge: 0.9, specAngle: 120, tint: 0 });
+    // координаты считаем от рамки приложения, а не от окна: линза живёт внутри #device под доком
+    lg._syncBg = function () {
+      const r = document.getElementById('screen').getBoundingClientRect(), d = document.getElementById('device').getBoundingClientRect();
+      this.bgX = Math.round(r.left - d.left); this.bgY = Math.round(r.top - d.top);
+      this.lensInner.style.width = r.width + 'px'; this.lensInner.style.height = r.height + 'px';
+    };
+    bar.parentNode.insertBefore(lg.lensEl, bar); lg.glassEl.remove();
+    bar.classList.add('lg-on');
+  } else {
+    const p = lg.params; lg.lensX = g.x; lg.lensY = g.y;
+    if (p.width !== g.w || p.height !== g.h || p.radius !== g.r) lg.set({ width: g.w, height: g.h, radius: g.r });
+  }
+  lgReclone();
+}
+function render(opts = {}) { if (!opts.overlayOnly) { if (woRun && !woRun.own) woKill(); renderScreen(opts); saveMine(); lgSoon(); } renderOverlay(); }
 
 // ================= открытие кошелька: вкладка «Счета» =================
 // Только Web Animations API (transform/opacity) — без библиотек, на телефоне держит 60 кадров.
@@ -1411,7 +1990,7 @@ function openWallet(src) {
   // карта встала — подменяем копию настоящей карточкой
   woAt(1440, () => { first.style.visibility = ''; w.card.remove(); });
   woAt(1480, () => { w.el.remove(); });
-  woAt(2300, () => { woRun = null; });
+  woAt(2300, () => { woRun = null; lgReclone(); });
 }
 /** закрыть кошелёк: обратный порядок — карта уезжает в карман, клапан закрывается, кошелёк сжимается в иконку */
 function closeWallet(go) {
@@ -1572,6 +2151,11 @@ const handlers = {
     S.tab = d.to; S.stack = []; render({ top: true });
   },
   dockmore: () => { haptic(); setDock(!dockOpen); },
+  lgtoggle: () => {
+    lgPref = !lgPref; try { localStorage.setItem(LG_KEY, lgPref ? 'on' : 'off'); } catch (e) { /* выбор не запомнится */ }
+    haptic(); render({ anim: false }); lgSync();
+    toast(`<b>Жидкое стекло ${lgPref ? 'включено' : 'выключено'}</b><span class="tiny muted">${lgWanted() || !lgPref ? 'вернитесь на главный экран, чтобы увидеть док' : 'работает в стилях меню Expandable и Floating'}</span>`);
+  },
   dockclose: () => setDock(false),
   dockgo: (d) => { haptic(); setDock(false); if (d.to === 'add') { openAdd('expense'); return; } S.stack = [{ s: d.to }]; render({ top: true }); },
   push: (d) => { if (!d.to) return; S.stack.push({ s: d.to, id: d.id === undefined || d.id === '' ? undefined : isNaN(+d.id) ? d.id : +d.id }); render({ top: true }); },
@@ -1741,7 +2325,14 @@ document.getElementById('screen').addEventListener('scroll', (e) => {
   if (y > lastScrollY + 6 && y > 60) bar.classList.add('tb-hidden'); else if (y < lastScrollY - 6 || y < 60) bar.classList.remove('tb-hidden');
   lastScrollY = y;
 }, { passive: true });
-addEventListener('resize', () => moveInd(true));
+addEventListener('resize', () => { moveInd(true); lgSync(); });
+// прокрутка: копия под линзой едет вместе с экраном; пока крутим — облегчённый фильтр без радуги
+document.getElementById('screen').addEventListener('scroll', (e) => {
+  if (!lg) return;
+  const c = lg.lensInner.firstElementChild; if (c) c.scrollTop = e.target.scrollTop;
+  if (!lg._dragMode) lg.setDragMode(true);
+  clearTimeout(lgScrollT); lgScrollT = setTimeout(() => { if (lg) lg.setDragMode(false); }, 180);
+}, { passive: true });
 let swipeX = null;
 device.addEventListener('touchstart', (e) => { swipeX = S.overlay && S.overlay.type === 'side' ? e.touches[0].clientX : null; }, { passive: true });
 device.addEventListener('touchend', (e) => { if (swipeX != null && swipeX - e.changedTouches[0].clientX > 60) handlers.close(); swipeX = null; }, { passive: true });
