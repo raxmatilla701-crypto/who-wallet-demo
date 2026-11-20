@@ -33,6 +33,7 @@
   --accent: #0B7F6B; --on-accent: #FFFFFF; --income: #0B8457; --expense: #C9443A; --warn: #A86F00; --info: #2F5FC8; --chip: #E6F0ED;
   --c1: #3B6FD8; --c2: #0B7F6B; --c3: #D49A1F; --c4: #8E5BD6; --c5: #B3C0BC; --c6: #D45C8A;
   --card1: #0B7F6B; --card2: #2F5FC8; --card3: #6A47B8; --card4: #8A6420; --on-card: #FFFFFF;
+  --dock: rgba(255,255,255,.74); --dock-line: rgba(15,27,29,.09); --dock-ink: #0F1B1D; --dock-on: #0B7F6B; --dock-on-ink: #FFFFFF; --dock-hi: rgba(11,127,107,.13); --dock-more: rgba(15,27,29,.07);
   --badge: #C9443A; --on-badge: #FFFFFF; --scrim: rgba(15,27,29,.45); --page: #E2EAE8; --frame: #C9D5D2; --shadow: 0 30px 80px -30px rgba(15,27,29,.35);
   --font: "Manrope", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -41,12 +42,14 @@
   --accent: #2BD4AE; --on-accent: #04241C; --income: #3DDC97; --expense: #FF715F; --warn: #F4B84A; --info: #6F9BFF; --chip: #1B2B30;
   --c1: #6F9BFF; --c2: #2BD4AE; --c3: #F4B84A; --c4: #B98AF5; --c5: #5D726C; --c6: #F08BC2;
   --card1: #1E5A4C; --card2: #2B3F7A; --card3: #3A2E5C; --card4: #4A3F28; --on-card: #F4FAF8;
+  --dock: rgba(30,41,45,.66); --dock-line: rgba(255,255,255,.1); --dock-ink: #EDF4F2; --dock-on: #FFFFFF; --dock-on-ink: #0B1316; --dock-hi: rgba(255,255,255,.13); --dock-more: rgba(255,255,255,.15);
   --badge: #FF715F; --on-badge: #2A0805; --scrim: rgba(3,8,10,.66); --page: #060C0E; --frame: #1C2629; --shadow: 0 30px 80px -30px rgba(0,0,0,.8); color-scheme: dark; } }
 :root[data-theme="dark"] {
   --bg: #0B1316; --surface: #121D21; --surface2: #18262B; --line: #24343A; --text: #EDF4F2; --muted: #A6B8B3; --faint: #6F837D;
   --accent: #2BD4AE; --on-accent: #04241C; --income: #3DDC97; --expense: #FF715F; --warn: #F4B84A; --info: #6F9BFF; --chip: #1B2B30;
   --c1: #6F9BFF; --c2: #2BD4AE; --c3: #F4B84A; --c4: #B98AF5; --c5: #5D726C; --c6: #F08BC2;
   --card1: #1E5A4C; --card2: #2B3F7A; --card3: #3A2E5C; --card4: #4A3F28; --on-card: #F4FAF8;
+  --dock: rgba(30,41,45,.66); --dock-line: rgba(255,255,255,.1); --dock-ink: #EDF4F2; --dock-on: #FFFFFF; --dock-on-ink: #0B1316; --dock-hi: rgba(255,255,255,.13); --dock-more: rgba(255,255,255,.15);
   --badge: #FF715F; --on-badge: #2A0805; --scrim: rgba(3,8,10,.66); --page: #060C0E; --frame: #1C2629; --shadow: 0 30px 80px -30px rgba(0,0,0,.8); color-scheme: dark; }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -136,13 +139,49 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 .device[data-tb="notch"] .toast, .device[data-tb="center"] .toast { bottom: 122px; }
 /* 8 Dot: спокойно — только иконки, активную отмечает точка */
 .tb-dot { border-top-color: transparent; }
-.tb-dot .tl { display: none; }
+.tb-dot .tl, .tb-expandable .tl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } /* подпись скрыта, но читается экранным диктором */
 .tb-dot .tab { padding-top: 12px; gap: 0; }
 .tb-dot .tic::after { content: ""; position: absolute; left: 50%; bottom: -11px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: var(--accent);
   transform: scale(0); transition: transform .4s cubic-bezier(.3,1.6,.5,1); }
 .tb-dot .tab.on .tic::after { transform: scale(1); }
 .tb-dot .tbadge:not(.dot) { font-size: 0; min-width: 0; width: 10px; height: 10px; padding: 0; top: -2px; left: 17px; }
 .tb-dot .fab { width: 50px; height: 50px; box-shadow: none; }
+/* 9 Expandable (Finance App Navigation): стеклянный док с залитыми иконками и меню «ещё» */
+svg.fi { width: 24px; height: 24px; flex: none; display: block; }
+.tabbar .tf, .tabbar .tb-more { display: none; }
+.tb-expandable { left: 16px; right: 16px; bottom: 16px; height: 72px; border-radius: 36px; border: 1px solid var(--dock-line); display: flex; align-items: center; justify-content: space-between;
+  padding: 0 7px; background: var(--dock); -webkit-backdrop-filter: blur(22px) saturate(1.5); backdrop-filter: blur(22px) saturate(1.5); box-shadow: 0 22px 50px -18px rgba(0,0,0,.45); }
+.tb-expandable .fab, .tb-expandable .ti { display: none; }
+.tb-expandable .tab { width: 56px; height: 56px; padding: 0; display: grid; place-items: center; position: relative; z-index: 1; color: color-mix(in srgb, var(--dock-ink) 55%, transparent); }
+.tb-expandable .tab.on { color: var(--dock-on); }
+.tb-expandable .tf { display: block; width: 26px; height: 26px; }
+.tf.pop { animation: tiPop .55s cubic-bezier(.3,1.5,.5,1); }
+.tb-expandable .tb-ind { display: block; top: 7px; width: 56px; height: 56px; border-radius: 28px; background: var(--dock-hi); box-shadow: none; }
+.tb-expandable .tb-more { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; position: relative; z-index: 1; background: var(--dock-more); color: var(--dock-ink);
+  transition: background .3s, color .3s, transform .15s; }
+.tb-more:active { transform: scale(.93); }
+.tb-more > .tm-dots, .tb-more > .tm-x { grid-area: 1 / 1; display: grid; place-items: center; transition: transform .45s cubic-bezier(.3,1.4,.5,1), opacity .25s; }
+.tb-more .tm-x { opacity: 0; transform: rotate(-90deg) scale(.4); }
+.tb-more.open { background: var(--dock-on); color: var(--dock-on-ink); }
+.tb-more.open .tm-dots { opacity: 0; transform: rotate(90deg) scale(.4); }
+.tb-more.open .tm-x { opacity: 1; transform: none; }
+.tb-more .tbadge { top: 1px; left: auto; right: 1px; }
+.dock-scrim { position: absolute; inset: 0; z-index: 4; background: color-mix(in srgb, var(--bg) 40%, transparent); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); animation: fade .25s ease-out; }
+.dock-menu { position: absolute; left: 16px; right: 16px; bottom: 98px; z-index: 6; padding: 10px; border-radius: 30px; border: 1px solid var(--dock-line); background: var(--dock);
+  -webkit-backdrop-filter: blur(22px) saturate(1.5); backdrop-filter: blur(22px) saturate(1.5); box-shadow: 0 24px 60px -20px rgba(0,0,0,.5); transform-origin: calc(100% - 44px) 100%;
+  animation: dockIn .42s cubic-bezier(.2,1.1,.3,1); }
+@keyframes dockIn { from { opacity: 0; transform: translateY(18px) scale(.9); } }
+.dock-menu.out { animation: dockOut .16s ease-in forwards; }
+.dock-scrim.out { animation: fadeOut .16s ease-in forwards; }
+@keyframes dockOut { to { opacity: 0; transform: translateY(12px) scale(.94); } }
+.dmi { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 8px; width: 100%; height: 52px; padding: 0 14px 0 8px; border-radius: 20px;
+  color: var(--dock-ink); font-size: 16.5px; font-weight: 600; text-align: left; transition: background .15s; animation: rise .38s cubic-bezier(.2,.8,.2,1) backwards; }
+.dmi:nth-child(2) { animation-delay: .04s } .dmi:nth-child(3) { animation-delay: .08s } .dmi:nth-child(4) { animation-delay: .12s } .dmi:nth-child(5) { animation-delay: .16s }
+.dmi:active { background: var(--dock-more); }
+.dmic { width: 44px; height: 44px; display: grid; place-items: center; }
+.dmic svg.fi { width: 26px; height: 26px; }
+.dmi[data-to="add"] { color: var(--accent); font-weight: 800; }
+.device[data-tb="expandable"] .toast { bottom: 102px; }
 /* выбор стиля: полоска над меню, меню остаётся видно и живо */
 .tbstrip { position: absolute; left: 12px; right: 12px; bottom: 132px; z-index: 12; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 10px 12px 12px;
   box-shadow: 0 20px 50px -18px rgba(0,0,0,.45); animation: rise .3s cubic-bezier(.2,.8,.2,1); }
@@ -454,7 +493,8 @@ html.no-anim .device { width: 390px; height: 844px; min-height: 0; border-radius
       <li>Аналитика → «Спросить» → AI-помощник отвечает по этим же данным.</li>
       <li><b>Бейджи на нижнем меню:</b> «Операции» — сколько новых записей (в списке они отмечены точкой), «Счета» — долги с просрочкой или сроком в ближайшие 3 дня, точка на «Аналитике» — лимит категории исчерпан. Бейдж гаснет, когда раздел открыт. Добавьте расход на главной — счётчик на «Операциях» подпрыгнет.</li>
       <li><b>Боковое меню:</b> кнопка ☰ слева вверху → плавающая панель со всеми разделами, бейджами и профилем. Закрывается крестиком, тапом мимо панели или свайпом влево.</li>
-      <li><b>8 стилей нижнего меню:</b> ☰ → «Нижнее меню» (или Профиль → «Нижнее меню»): Sliding bar, Expanding, Center button, Floating, Hide on scroll, Badges, Notch, Dot. Меню меняется сразу, выбор запоминается. Иконка вкладки при переходе прорисовывается и подпрыгивает.</li>
+      <li><b>Новое — Expandable (Finance App Navigation):</b> стеклянный док с иконками и кнопкой «⋯» справа. Нажмите её — над доком раскроется меню: новая операция, долги, цели, AI-помощник, настройки.</li>
+      <li><b>9 стилей нижнего меню:</b> ☰ → «Нижнее меню» (или Профиль → «Нижнее меню»): Sliding bar, Expanding, Center button, Floating, Hide on scroll, Badges, Notch, Dot, Expandable. Меню меняется сразу, выбор запоминается. Иконка вкладки при переходе прорисовывается и подпрыгивает.</li>
       <li>Аватар R → профиль: светлая и тёмная тема.</li>
     </ol>
     <p class="small">На компьютере сумму можно набирать с клавиатуры, Esc закрывает окно.</p>
@@ -483,6 +523,30 @@ const P = {
   trash: 'M5 7h14M9 7V5h6v2M7 7l1 13h8l1-13', warn: 'M12 4l9 16H3zM12 10v4M12 17h.01', globe: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18M12 3c-3 3.5-3 14.5 0 18M12 3c3 3.5 3 14.5 0 18',
   pie: 'M12 3a9 9 0 1 0 9 9h-9zM15 3.5A9 9 0 0 1 20.5 9H15z', coin: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM9 15c.5 1 1.6 1.5 3 1.5 1.8 0 3-.8 3-2.2 0-3-6-1.6-6-4.6C9 8.3 10.2 7.5 12 7.5c1.3 0 2.3.5 2.8 1.4M12 6v1.5M12 16.5V18',
 };
+// залитые иконки для дока: форма + прорези (маска), чтобы через прорези было видно стекло
+const dots6 = [6, 12, 18].flatMap((x) => [9, 15].map((y) => `M${x} ${y - 1.7}a1.7 1.7 0 1 1 0 3.4 1.7 1.7 0 0 1 0-3.4z`)).join('');
+const gear = (() => { let d = ''; for (let i = 0; i < 32; i++) { const a = ((i + 0.5) / 32) * Math.PI * 2 - Math.PI / 2, r = i % 4 === 1 || i % 4 === 2 ? 10.2 : 7.9;
+  d += (i ? 'L' : 'M') + (12 + r * Math.cos(a)).toFixed(2) + ' ' + (12 + r * Math.sin(a)).toFixed(2); } return d + 'z'; })();
+const PF = {
+  home: { f: 'M10.6 3.5a2.2 2.2 0 0 1 2.8 0l6.3 5.2c.5.4.8 1 .8 1.7v8.1a2.5 2.5 0 0 1-2.5 2.5h-3v-4.5a1.5 1.5 0 0 0-1.5-1.5h-3A1.5 1.5 0 0 0 9 16.5V21H6a2.5 2.5 0 0 1-2.5-2.5v-8.1c0-.7.3-1.3.8-1.7z' },
+  ops: { f: 'M7 3h10a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z', c: 'M8.5 8.5h7M8.5 12h7M8.5 15.5h4' },
+  chart: { f: 'M7.5 3h9A4.5 4.5 0 0 1 21 7.5v9a4.5 4.5 0 0 1-4.5 4.5h-9A4.5 4.5 0 0 1 3 16.5v-9A4.5 4.5 0 0 1 7.5 3z', c: 'M7.6 14.6l2.9-3.4 2.6 2.4 3.3-4.3' },
+  wallet: { f: 'M6.5 4.5h11A3.5 3.5 0 0 1 21 8v8a3.5 3.5 0 0 1-3.5 3.5h-11A3.5 3.5 0 0 1 3 16V8a3.5 3.5 0 0 1 3.5-3.5z', c: 'M3 9.5h18M7 15h3.5' },
+  plus: { f: 'M12 2.5a9.5 9.5 0 1 1 0 19 9.5 9.5 0 0 1 0-19z', c: 'M12 8v8M8 12h8' },
+  people: { f: 'M9 11.5a3.6 3.6 0 1 0 0-7.2 3.6 3.6 0 0 0 0 7.2zM2.5 19.1c0-3.1 2.9-5.1 6.5-5.1s6.5 2 6.5 5.1c0 .8-.6 1.4-1.4 1.4H3.9c-.8 0-1.4-.6-1.4-1.4zM16.6 11a2.8 2.8 0 1 0 0-5.6 2.8 2.8 0 0 0 0 5.6zM17 13.4c2.6.2 4.5 1.8 4.5 4.3 0 .7-.5 1.3-1.2 1.3h-3c.1-.3.2-.6.2-.9 0-1.9-.8-3.5-2.1-4.6.5-.1 1-.1 1.6-.1z' },
+  target: { f: 'M12 2.5a9.5 9.5 0 1 1 0 19 9.5 9.5 0 0 1 0-19z', c: 'M12 6.8a5.2 5.2 0 1 1 0 10.4 5.2 5.2 0 0 1 0-10.4z' },
+  spark: { f: 'M12 2.5Q13.2 10.8 21.5 12Q13.2 13.2 12 21.5Q10.8 13.2 2.5 12Q10.8 10.8 12 2.5z' },
+  gear: { f: gear, h: 'M12 8.9a3.1 3.1 0 1 1 0 6.2 3.1 3.1 0 0 1 0-6.2z', s: 1.4 },
+  dots: { f: dots6 },
+};
+let icfN = 0;
+function icf(n, cls = 'fi') {
+  const d = PF[n], id = 'wwm' + ++icfN, cut = d.c || d.h;
+  const mask = cut ? `<defs><mask id="${id}" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="#fff" stroke="none"/>`
+    + (d.c ? `<path d="${d.c}" fill="none" stroke="#000" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>` : '')
+    + (d.h ? `<path d="${d.h}" fill="#000" stroke="none"/>` : '') + '</mask></defs>' : '';
+  return `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true">${mask}<path d="${d.f}" fill="currentColor" ${d.s ? `stroke="currentColor" stroke-width="${d.s}" stroke-linejoin="round"` : 'stroke="none"'}${cut ? ` mask="url(#${id})"` : ''}/></svg>`;
+}
 const ic = (n, cls = 'i') => `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true"><path d="${P[n]}"/></svg>`;
 
 // ================= справочники =================
@@ -970,7 +1034,7 @@ function profileScreen() {
   <div class="row" style="margin-bottom:18px"><span class="iconbtn" style="width:56px;height:56px;background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent);font-size:22px;font-weight:800">${esc((tgName() || 'R')[0].toUpperCase())}</span><div><b style="font-size:18px">${S.mine ? esc(tgName() || 'Мой профиль') : 'Демо-профиль'}</b><br><span class="small muted">${S.accounts.length} счёта · ${S.ops.length} операций${S.mine ? ' · свои данные' : ' · демо-данные'}</span></div></div>
   <div class="small muted" style="font-weight:700;margin-bottom:8px">Тема</div>
   <div class="seg"><button class="${th === 'auto' ? 'on' : ''}" data-act="theme" data-t="auto">Как в Telegram</button><button class="${th === 'light' ? 'on' : ''}" data-act="theme" data-t="light">Светлая</button><button class="${th === 'dark' ? 'on' : ''}" data-act="theme" data-t="dark">Тёмная</button></div>
-  <button class="listrow" style="margin-top:14px" data-act="tbopen"><span class="ri">${ic('layout')}</span><span><b>Нижнее меню</b><br><span class="tiny muted">${TB_STYLES.findIndex((x) => x[0] === TB) + 1} ${TB_STYLES.find((x) => x[0] === TB)[1]} · 8 стилей</span></span><span></span>${ic('right')}</button>
+  <button class="listrow" style="margin-top:14px" data-act="tbopen"><span class="ri">${ic('layout')}</span><span><b>Нижнее меню</b><br><span class="tiny muted">${TB_STYLES.findIndex((x) => x[0] === TB) + 1} ${TB_STYLES.find((x) => x[0] === TB)[1]} · ${TB_STYLES.length} стилей</span></span><span></span>${ic('right')}</button>
   <div class="small muted" style="font-weight:700;margin:16px 0 8px">Язык</div>
   <div class="seg"><button class="on">Русский</button><button data-act="toast" data-msg="Узбекский язык появится в следующей версии прототипа">O‘zbekcha</button></div>
   <div style="margin-top:18px">${[['coin', 'Основная валюта', 'UZS'], ['bell', 'Ежедневный отчёт', '21:00'], ['lock', 'Вход в приложение', 'Face ID'], ['globe', 'О приложении', 'прототип']].map(([i, t, v]) => `<button class="listrow" data-act="toast" data-msg="«${t}» — в следующей версии прототипа"><span class="ri">${ic(i)}</span><b>${t}</b><span class="small muted">${v}</span>${ic('right')}</button>`).join('')}</div>
@@ -1160,42 +1224,65 @@ function tabBadge(k, n) {
 // ---- нижнее меню: один раз строим кнопки, дальше только переключаем классы — так работают анимации ----
 const TB_STYLES = [['sliding', 'Sliding bar', 'полоска едет к вкладке'], ['expanding', 'Expanding', 'вкладка раскрывается'], ['center', 'Center button', 'кнопка «+» над панелью'],
   ['floating', 'Floating', 'док парит над экраном'], ['hide', 'Hide on scroll', 'прячется при прокрутке'], ['badges', 'Badges', 'классика со счётчиками'],
-  ['notch', 'Notch', '«+» в изогнутом вырезе'], ['dot', 'Dot', 'иконки и точка']];
-const TB_KEY = 'who-wallet-tabbar-style';
-let TB = (() => { try { const v = localStorage.getItem(TB_KEY); return TB_STYLES.some((x) => x[0] === v) ? v : 'sliding'; } catch (e) { return 'sliding'; } })();
+  ['notch', 'Notch', '«+» в изогнутом вырезе'], ['dot', 'Dot', 'иконки и точка'], ['expandable', 'Expandable', 'док и меню «ещё»']];
+const TB_KEY = 'who-wallet-tabbar-style-v2';
+let TB = (() => { try { const v = localStorage.getItem(TB_KEY); return TB_STYLES.some((x) => x[0] === v) ? v : 'expandable'; } catch (e) { return 'expandable'; } })();
+const TAB_FILLED = { home: 'home', ops: 'ops', analytics: 'chart', accounts: 'wallet' };
+const DOCK_MENU = [['add', 'Новая операция', 'plus'], ['debts', 'Долги', 'people'], ['goal', 'Цели и резерв', 'target'], ['ai', 'AI-помощник', 'spark'], ['profile', 'Настройки', 'gear']];
+let dockOpen = false;
+/** меню «ещё» над доком: открыть или закрыть с анимацией */
+function setDock(open) {
+  const menu = document.getElementById('dockMenu'), scrim = document.getElementById('dockScrim'), more = document.querySelector('#tabbar .tb-more');
+  if (!menu || open === dockOpen) return;
+  dockOpen = open;
+  more.classList.toggle('open', open); more.setAttribute('aria-expanded', String(open));
+  if (open) { menu.classList.remove('out'); scrim.classList.remove('out'); menu.hidden = false; scrim.hidden = false; return; }
+  const fin = () => { if (dockOpen) return; menu.hidden = true; scrim.hidden = true; menu.classList.remove('out'); scrim.classList.remove('out'); };
+  if (document.documentElement.classList.contains('no-anim') || matchMedia('(prefers-reduced-motion: reduce)').matches) return fin();
+  menu.classList.add('out'); scrim.classList.add('out'); setTimeout(fin, 160);
+}
 let lastActive = null, lastScrollY = 0;
 function buildTabbar() {
   const bar = document.getElementById('tabbar');
-  bar.innerHTML = '<span class="tb-ind" aria-hidden="true"></span>' + TABS.map((t) => (t ? `<button class="tab" data-act="tab" data-to="${t[0]}"><span class="tic">${ic(t[2], 'i ti')}<span class="tbs"></span></span><span class="tl">${t[1]}</span></button>`
-    : `<button class="fab" data-act="add" data-mode="expense" aria-label="Добавить операцию">${ic('plus')}</button>`)).join('');
+  bar.innerHTML = '<span class="tb-ind" aria-hidden="true"></span>' + TABS.map((t) => (t ? `<button class="tab" data-act="tab" data-to="${t[0]}"><span class="tic">${ic(t[2], 'i ti')}${icf(TAB_FILLED[t[0]], 'fi tf')}<span class="tbs"></span></span><span class="tl">${t[1]}</span></button>`
+    : `<button class="fab" data-act="add" data-mode="expense" aria-label="Добавить операцию">${ic('plus')}</button>`)).join('')
+    + `<button class="tb-more" data-act="dockmore" aria-label="Ещё" aria-expanded="false" aria-controls="dockMenu"><span class="tm-dots">${icf('dots')}</span><span class="tm-x">${ic('close')}</span><span class="tbs"></span></button>`;
+  bar.insertAdjacentHTML('afterend', `<div id="dockScrim" class="dock-scrim" data-act="dockclose" hidden></div><div id="dockMenu" class="dock-menu" role="menu" aria-label="Ещё" hidden>`
+    + DOCK_MENU.map(([to, label, icon]) => `<button class="dmi" role="menuitem" data-act="dockgo" data-to="${to}"><span class="dmic">${icf(icon)}</span><span>${label}</span><span class="tbs"></span></button>`).join('') + '</div>');
   bar.querySelectorAll('.ti path').forEach((p) => p.setAttribute('pathLength', '1'));
 }
 function applyTbStyle() {
   const bar = document.getElementById('tabbar'), dev = document.getElementById('device');
+  setDock(false);
   TB_STYLES.forEach(([k]) => bar.classList.toggle('tb-' + k, k === TB));
   bar.classList.remove('tb-hidden'); dev.dataset.tb = TB;
-  dev.classList.toggle('flow', TB === 'floating' || TB === 'hide');
+  dev.classList.toggle('flow', TB === 'floating' || TB === 'hide' || TB === 'expandable');
 }
 function moveInd(first) {
   const bar = document.getElementById('tabbar'), ind = bar.querySelector('.tb-ind'), on = bar.querySelector('.tab.on');
-  if (!ind || !on || bar.hidden || TB !== 'sliding') return;
-  const c = on.querySelector('.tic'), x = c.offsetLeft + c.offsetWidth / 2;
+  if (!ind || !on || bar.hidden || (TB !== 'sliding' && TB !== 'expandable')) return;
+  const c = on.querySelector('.tic').getBoundingClientRect(), b = bar.getBoundingClientRect(), x = Math.round(c.left - b.left - bar.clientLeft + c.width / 2);
   if (first || !ind.dataset.ready) { ind.style.transition = 'none'; ind.style.setProperty('--x', x + 'px'); void ind.offsetWidth; ind.style.transition = ''; ind.dataset.ready = '1'; return; }
   if (ind.style.getPropertyValue('--x') === x + 'px') return;
   ind.style.setProperty('--x', x + 'px');
-  try { ind.animate([{ width: '30px' }, { width: '52px' }, { width: '30px' }], { duration: 480, easing: 'ease-out' }); } catch (e) { /* без растяжки */ }
+  const w = TB === 'expandable' ? [56, 80] : [30, 52]; // по пути подсветка растягивается
+  try { ind.animate([{ width: w[0] + 'px' }, { width: w[1] + 'px' }, { width: w[0] + 'px' }], { duration: 480, easing: 'ease-out' }); } catch (e) { /* без растяжки */ }
 }
-function popIcon(b) { const ti = b && b.querySelector('.ti'); if (!ti) return; ti.classList.remove('pop'); void ti.offsetWidth; ti.classList.add('pop'); }
+function popIcon(b) { const ti = b && b.querySelector(TB === 'expandable' ? '.tf' : '.ti'); if (!ti) return; ti.classList.remove('pop'); void ti.offsetWidth; ti.classList.add('pop'); }
 function updateTabbar() {
   const bar = document.getElementById('tabbar'), nb = badges(), active = S.stack.length ? null : S.tab;
   bar.querySelectorAll('.tab').forEach((b) => {
-    const k = b.dataset.to, n = nb[k], on = k === active;
+    const k = b.dataset.to, n = TB === 'expandable' && k === 'accounts' ? 0 : nb[k], on = k === active; // в доке долги живут в меню «ещё»
     b.classList.toggle('on', on);
     if (S.tab === k) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
     if (n) b.setAttribute('aria-label', `${b.querySelector('.tl').textContent}, ${BADGE_SAYS[k](n)}`); else b.removeAttribute('aria-label');
     b.querySelector('.tbs').innerHTML = tabBadge(k, n);
     if (on && lastActive && lastActive !== k) popIcon(b);
   });
+  const more = bar.querySelector('.tb-more'), mn = TB === 'expandable' ? nb.accounts : 0;
+  more.querySelector('.tbs').innerHTML = tabBadge('more', mn); more.setAttribute('aria-label', mn ? `Ещё, ${BADGE_SAYS.accounts(mn)}` : 'Ещё');
+  const dd = document.querySelector('#dockMenu [data-to="debts"] .tbs'); if (dd) dd.innerHTML = nb.accounts ? `<span class="rbadge">${nb.accounts}</span>` : '';
+  if (S.stack.length) setDock(false);
   if (active) { moveInd(!lastActive); lastActive = active; }
 }
 function render(opts = {}) { if (!opts.overlayOnly) { renderScreen(opts); saveMine(); } renderOverlay(); }
@@ -1319,7 +1406,10 @@ function registerPay(x, A, v, debtPart, ov) {
   toast(`<b>${closed ? 'Долг погашен' : 'Платёж записан'}</b><span class="tiny muted">${x.person} · ${fmt(v, A.cur)}${A.cur !== x.cur ? ` ≈ ${fmt(debtPart, x.cur)}` : ''}${closed ? '' : ` · осталось ${fmt(r2(x.amount - x.paid), x.cur)}`}${extra}</span>`, u);
 }
 const handlers = {
-  tab: (d) => { S.tab = d.to; S.stack = []; render({ top: true }); },
+  tab: (d) => { setDock(false); S.tab = d.to; S.stack = []; render({ top: true }); },
+  dockmore: () => { haptic(); setDock(!dockOpen); },
+  dockclose: () => setDock(false),
+  dockgo: (d) => { haptic(); setDock(false); if (d.to === 'add') { openAdd('expense'); return; } S.stack = [{ s: d.to }]; render({ top: true }); },
   push: (d) => { if (!d.to) return; S.stack.push({ s: d.to, id: d.id === undefined || d.id === '' ? undefined : isNaN(+d.id) ? d.id : +d.id }); render({ top: true }); },
   back: () => { S.stack.pop(); render({ back: true }); },
   op: (d) => { S.stack.push({ s: 'op', id: +d.id }); render({ top: true }); },
@@ -1489,6 +1579,7 @@ let swipeX = null;
 device.addEventListener('touchstart', (e) => { swipeX = S.overlay && S.overlay.type === 'side' ? e.touches[0].clientX : null; }, { passive: true });
 device.addEventListener('touchend', (e) => { if (swipeX != null && swipeX - e.changedTouches[0].clientX > 60) handlers.close(); swipeX = null; }, { passive: true });
 document.addEventListener('keydown', (e) => {
+  if (dockOpen && !S.overlay && e.key === 'Escape') { setDock(false); return; }
   if (!S.overlay) return;
   if (e.key === 'Escape') { handlers.close(); return; }
   if (!['add', 'amount', 'alloc', 'dpay', 'newdebt', 'newgoal'].includes(S.overlay.type) || e.target.tagName === 'INPUT') return;
@@ -1504,6 +1595,7 @@ const SHOT = {
   'shot-home': [],
   'shot-side': [() => handlers.side()],
   'shot-tbpick': [() => handlers.tbopen()],
+  'shot-dock': [() => { TB = 'expandable'; applyTbStyle(); updateTabbar(); setDock(true); }],
   'shot-zero': [() => { S = zeroState(); render({ anim: false }); }],
   'shot-zero-profile': [() => { S = zeroState(); S.stack = [{ s: 'profile' }]; render({ anim: false }); }],
   'shot-newdebt': [() => { S = zeroState(); handlers.push({ to: 'debts' }); handlers.newdebt(); S.overlay.person = 'Алишер'; }, ...keys('300000')],
