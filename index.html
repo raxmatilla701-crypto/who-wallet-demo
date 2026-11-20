@@ -4,6 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
+<script>
+/* Номер сборки. При обновлении меняйте его здесь и в version.txt — тогда Telegram не покажет старую копию из кэша. */
+(function () {
+  var BUILD = '2026-11-20.3';
+  window.WW_BUILD = BUILD;
+  try {
+    if (!window.fetch || !window.URL || !/^https?:$/.test(location.protocol)) return;
+    fetch('version.txt?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (v) {
+      v = (v || '').trim();
+      if (!/^[\w.-]{1,40}$/.test(v) || v === BUILD) return;
+      var key = 'ww-reload-' + v;
+      try { if (sessionStorage.getItem(key)) return; sessionStorage.setItem(key, "1"); } catch (e) { return; }
+      var u = new URL(location.href); u.searchParams.set('v', v); location.replace(u.toString());
+    }).catch(function () {});
+  } catch (e) {}
+})();
+</script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
 (function () {
@@ -34,7 +51,7 @@
   --c1: #3B6FD8; --c2: #0B7F6B; --c3: #D49A1F; --c4: #8E5BD6; --c5: #B3C0BC; --c6: #D45C8A;
   --card1: #0B7F6B; --card2: #2F5FC8; --card3: #6A47B8; --card4: #8A6420; --on-card: #FFFFFF;
   --dock: rgba(255,255,255,.74); --dock-line: rgba(15,27,29,.09); --dock-ink: #0F1B1D; --dock-on: #0B7F6B; --dock-on-ink: #FFFFFF; --dock-hi: rgba(11,127,107,.13); --dock-more: rgba(15,27,29,.07);
-  --lg-tint: rgba(246,249,248,.66);
+  --lg-tint: rgba(246,249,248,.42);
   --badge: #C9443A; --on-badge: #FFFFFF; --scrim: rgba(15,27,29,.45); --page: #E2EAE8; --frame: #C9D5D2; --shadow: 0 30px 80px -30px rgba(15,27,29,.35);
   --font: "Manrope", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -44,7 +61,7 @@
   --c1: #6F9BFF; --c2: #2BD4AE; --c3: #F4B84A; --c4: #B98AF5; --c5: #5D726C; --c6: #F08BC2;
   --card1: #1E5A4C; --card2: #2B3F7A; --card3: #3A2E5C; --card4: #4A3F28; --on-card: #F4FAF8;
   --dock: rgba(30,41,45,.66); --dock-line: rgba(255,255,255,.1); --dock-ink: #EDF4F2; --dock-on: #FFFFFF; --dock-on-ink: #0B1316; --dock-hi: rgba(255,255,255,.13); --dock-more: rgba(255,255,255,.15);
-  --lg-tint: rgba(18,28,32,.52);
+  --lg-tint: rgba(18,28,32,.36);
   --badge: #FF715F; --on-badge: #2A0805; --scrim: rgba(3,8,10,.66); --page: #060C0E; --frame: #1C2629; --shadow: 0 30px 80px -30px rgba(0,0,0,.8); color-scheme: dark; } }
 :root[data-theme="dark"] {
   --bg: #0B1316; --surface: #121D21; --surface2: #18262B; --line: #24343A; --text: #EDF4F2; --muted: #A6B8B3; --faint: #6F837D;
@@ -52,7 +69,7 @@
   --c1: #6F9BFF; --c2: #2BD4AE; --c3: #F4B84A; --c4: #B98AF5; --c5: #5D726C; --c6: #F08BC2;
   --card1: #1E5A4C; --card2: #2B3F7A; --card3: #3A2E5C; --card4: #4A3F28; --on-card: #F4FAF8;
   --dock: rgba(30,41,45,.66); --dock-line: rgba(255,255,255,.1); --dock-ink: #EDF4F2; --dock-on: #FFFFFF; --dock-on-ink: #0B1316; --dock-hi: rgba(255,255,255,.13); --dock-more: rgba(255,255,255,.15);
-  --lg-tint: rgba(18,28,32,.52);
+  --lg-tint: rgba(18,28,32,.36);
   --badge: #FF715F; --on-badge: #2A0805; --scrim: rgba(3,8,10,.66); --page: #060C0E; --frame: #1C2629; --shadow: 0 30px 80px -30px rgba(0,0,0,.8); color-scheme: dark; }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -1591,7 +1608,7 @@ function profileScreen() {
   <button class="listrow" data-act="tbopen"><span class="ri">${ic('layout')}</span><span><b>Нижнее меню</b><br><span class="tiny muted">${TB_STYLES.findIndex((x) => x[0] === TB) + 1} ${TB_STYLES.find((x) => x[0] === TB)[1]} · ${TB_STYLES.length} стилей</span></span><span></span>${ic('right')}</button>
   <div class="small muted" style="font-weight:700;margin:16px 0 8px">Язык</div>
   <div class="seg"><button class="on">Русский</button><button data-act="toast" data-msg="Узбекский язык появится в следующей версии прототипа">O‘zbekcha</button></div>
-  <div style="margin-top:18px">${[['coin', 'Основная валюта', 'UZS'], ['bell', 'Ежедневный отчёт', '21:00'], ['lock', 'Вход в приложение', 'Face ID'], ['globe', 'О приложении', 'прототип']].map(([i, t, v]) => `<button class="listrow" data-act="toast" data-msg="«${t}» — в следующей версии прототипа"><span class="ri">${ic(i)}</span><b>${t}</b><span class="small muted">${v}</span>${ic('right')}</button>`).join('')}</div>
+  <div style="margin-top:18px">${[['coin', 'Основная валюта', 'UZS'], ['bell', 'Ежедневный отчёт', '21:00'], ['lock', 'Вход в приложение', 'Face ID'], ['globe', 'О приложении', 'сборка ' + window.WW_BUILD]].map(([i, t, v]) => `<button class="listrow" data-act="toast" data-msg="«${t}» — в следующей версии прототипа"><span class="ri">${ic(i)}</span><b>${t}</b><span class="small muted">${v}</span>${ic('right')}</button>`).join('')}</div>
   <div class="small muted" style="font-weight:700;margin:16px 0 8px">Данные</div>
   <div class="card" style="display:grid;gap:10px">
     <span class="small muted">${S.mine ? 'Вы ведёте свои записи. Они хранятся только на этом устройстве и не попадают в бота.' : 'Сейчас показаны демо-данные. Можно начать с нуля и вносить свои доходы, расходы и долги.'}</span>
@@ -1615,7 +1632,7 @@ function sideHTML() {
   const cnt = (n) => (n === 'dot' ? '<span class="sdot"></span>' : n ? `<span class="rbadge">${n > 9 ? '9+' : n}</span>` : '<span></span>');
   const item = (to, label, icon, tail = '<span></span>') => `<button class="sitem ${here === to ? 'on' : ''}" data-act="sidego" data-to="${to}"${here === to ? ' aria-current="page"' : ''}><span class="sic">${ic(icon)}</span><span>${label}</span>${tail}</button>`;
   return `<div class="scrim" data-act="close"></div><nav class="side" role="dialog" aria-modal="true" aria-label="Меню">
-    <div class="shead"><span class="slogo">${ic('wallet')}</span><span><b>Who Wallet</b><span class="tiny">${S.mine ? 'мои данные' : 'демо-данные'}</span></span><button class="iconbtn sclose" data-act="close" aria-label="Закрыть меню">${ic('close')}</button></div>
+    <div class="shead"><span class="slogo">${ic('wallet')}</span><span><b>Who Wallet</b><span class="tiny">${S.mine ? 'мои данные' : 'демо-данные'} · сборка ${window.WW_BUILD}</span></span><button class="iconbtn sclose" data-act="close" aria-label="Закрыть меню">${ic('close')}</button></div>
     <div class="slabel">Разделы</div>
     ${item('home', 'Главная', 'home')}${item('ops', 'Операции', 'list', cnt(nb.ops))}${item('analytics', 'Аналитика', 'chart', cnt(nb.analytics))}${item('accounts', 'Счета', 'wallet')}
     <div class="slabel">Деньги</div>
@@ -1874,7 +1891,7 @@ function lgSync() {
   const g = lgGeom(); if (!g.w || bar.hidden) { if (lg) lg.lensEl.style.display = 'none'; return; }
   if (!lg) {
     lg = new window.LiquidGlass({ background: document.getElementById('screen'), draggable: false, zIndex: 5, x: g.x, y: g.y, width: g.w, height: g.h, radius: g.r,
-      scale: 24, depth: 18, curvature: 2.6, convexity: 1, chroma: 0.14, blur: 0, glow: 0, edge: 0.9, specAngle: 120, tint: 0 });
+      scale: 34, depth: 26, curvature: 2.4, convexity: 1, chroma: 0.2, blur: 0, glow: 0, edge: 1, specAngle: 120, tint: 0 });
     // координаты считаем от рамки приложения, а не от окна: линза живёт внутри #device под доком
     lg._syncBg = function () {
       const r = document.getElementById('screen').getBoundingClientRect(), d = document.getElementById('device').getBoundingClientRect();
